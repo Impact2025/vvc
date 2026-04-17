@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { players } from "@/db/schema";
 import { desc } from "drizzle-orm";
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
       .values({ name, number, goals: goals ?? 0, assists: assists ?? 0, position, photo_url })
       .returning();
 
+    revalidatePath("/kids");
     return NextResponse.json(newPlayer, { status: 201 });
   } catch (error) {
     console.error(error);

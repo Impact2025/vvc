@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { players } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -32,6 +33,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
 
+    revalidatePath("/kids");
     return NextResponse.json(updated);
   } catch (error) {
     console.error(error);
