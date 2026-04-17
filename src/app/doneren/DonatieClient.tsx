@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import {
-  ExternalLink, Check, Info, Building2, Smartphone,
-  Share2, CheckCircle, Heart, ChevronRight,
+  ExternalLink, Check,
+  Share2, CheckCircle, ChevronRight,
 } from "lucide-react";
-import BusinessPackageModal from "@/components/donations/BusinessPackageModal";
 import DonorWall from "@/components/donations/DonorWall";
 import DonationThermometer from "@/components/donations/DonationThermometer";
 import toast from "react-hot-toast";
@@ -283,7 +282,6 @@ function ShareButton() {
 }
 
 export default function DonatieClient({ raised, goal, tikkieUrls, donations }: DonatieClientProps) {
-  const [modalType, setModalType] = useState<"s" | "l" | null>(null);
   const recentDonors = donations.slice(0, 3);
 
   return (
@@ -369,81 +367,11 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
         </div>
       </div>
 
-      {/* ── ZAKELIJKE PAKKETTEN ──────────────────────────────────── */}
-      <section className="mb-16">
-        <p className="section-label mb-2">Zakelijke Sponsoring</p>
-        <h2 className="text-2xl font-black font-headline text-on-surface mb-2">
-          Investeer & <span className="text-primary-container">ontvang diensten</span>
-        </h2>
-        <p className="text-on-surface-variant text-sm mb-6 max-w-xl">
-          Steun VVC en ontvang professionele digitale diensten van WeAreImpact — btw-aftrekbaar.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Pakket S */}
-          <div className="card card-hover p-7 relative overflow-hidden">
-            <div className="absolute top-4 right-4">
-              <span className="text-[9px] font-black uppercase tracking-widest bg-secondary/10 text-secondary px-2 py-1 rounded-full">Pakket S</span>
-            </div>
-            <Building2 size={24} className="text-secondary mb-3" />
-            <h3 className="text-xl font-black font-headline text-on-surface mb-1">Website + AI</h3>
-            <p className="text-4xl font-black font-headline text-primary-container mb-1">€1.500</p>
-            <p className="text-xs text-outline mb-5">excl. btw · via WeAreImpact BV</p>
-            <ul className="space-y-2 mb-6">
-              {["Professionele bedrijfswebsite", "AI-gestuurde chat assistent", "SEO-geoptimaliseerd", "1 maand gratis support"].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm">
-                  <Check size={14} className="text-green-500 flex-shrink-0" />
-                  <span className="text-on-surface-variant">{f}</span>
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => setModalType("s")} className="btn-secondary w-full">
-              Aanvragen
-            </button>
-          </div>
-
-          {/* Pakket L */}
-          <div className="card card-hover p-7 relative overflow-hidden border-primary-container/20">
-            <div className="absolute top-4 right-4">
-              <span className="text-[9px] font-black uppercase tracking-widest bg-primary-container/10 text-primary-container px-2 py-1 rounded-full">Pakket L</span>
-            </div>
-            <Smartphone size={24} className="text-primary-container mb-3" />
-            <h3 className="text-xl font-black font-headline text-on-surface mb-1">Custom App</h3>
-            <p className="text-4xl font-black font-headline text-primary-container mb-1">€5.000</p>
-            <p className="text-xs text-outline mb-5">excl. btw · via WeAreImpact BV</p>
-            <ul className="space-y-2 mb-6">
-              {["Op maat web of mobiele app", "Volledig naar jouw wensen", "Database & backend inbegrepen", "3 maanden gratis support"].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm">
-                  <Check size={14} className="text-green-500 flex-shrink-0" />
-                  <span className="text-on-surface-variant">{f}</span>
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => setModalType("l")} className="btn-primary w-full">
-              Aanvragen
-            </button>
-          </div>
-        </div>
-
-        {/* Disclaimer */}
-        <div className="flex gap-3 p-4 bg-surface-container rounded-xl border border-outline-variant/10">
-          <Info size={15} className="text-secondary flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-on-surface-variant leading-relaxed">
-            <strong className="text-on-surface">Zakelijke opdracht, geen donatie.</strong>{" "}
-            Factuur van WeAreImpact BV. Btw-aftrekbaar als marketing- of ICT-investering.{" "}
-            <a href="mailto:chat@weareimpact.nl" className="text-primary-container underline">chat@weareimpact.nl</a>
-          </p>
-        </div>
-      </section>
-
       {/* ── DONEURSMUUR ─────────────────────────────────────────── */}
       <section className="mb-8">
         <DonorWall donations={donations} />
       </section>
 
-      {/* Modals */}
-      <BusinessPackageModal isOpen={modalType === "s"} onClose={() => setModalType(null)} packageType="s" tikkieUrl={tikkieUrls.pakket_s} />
-      <BusinessPackageModal isOpen={modalType === "l"} onClose={() => setModalType(null)} packageType="l" tikkieUrl={tikkieUrls.pakket_l} />
     </div>
   );
 }
