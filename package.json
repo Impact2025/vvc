@@ -1,0 +1,49 @@
+{
+  "name": "vvcgoesuk",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
+    "@neondatabase/serverless": "^0.9.3",
+    "@types/leaflet": "^1.9.21",
+    "@vercel/blob": "^2.3.3",
+    "cloudinary": "^2.3.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.31.2",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.395.0",
+    "next": "^14.2.35",
+    "next-cloudinary": "^6.13.0",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "tailwind-merge": "^2.3.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pusher-js": "^4.2.2",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/web-push": "^3.6.4",
+    "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.22.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

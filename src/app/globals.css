@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Manrope', sans-serif;
+    background-color: #fcf9f8;
+    color: #1c1b1b;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer components {
+  .vvc-logo {
+    @apply font-headline font-black tracking-tighter text-secondary;
+  }
+  .vvc-logo span {
+    @apply text-primary-container;
+  }
+  .card {
+    @apply bg-surface-container-lowest border border-outline-variant/15 rounded-xl;
+  }
+  .card-hover {
+    @apply hover:border-outline-variant/40 hover:shadow-sm transition-all duration-200;
+  }
+  .btn-primary {
+    @apply bg-primary-container text-white font-bold rounded-lg px-6 py-3 hover:opacity-90 active:scale-[0.98] transition-all duration-150 font-headline text-sm uppercase tracking-wider;
+  }
+  .btn-secondary {
+    @apply border border-primary-container text-primary-container font-bold rounded-lg px-6 py-3 hover:bg-primary-container hover:text-white active:scale-[0.98] transition-all duration-150 font-headline text-sm uppercase tracking-wider;
+  }
+  .btn-ghost {
+    @apply text-secondary font-bold rounded-lg px-4 py-2 hover:bg-surface-container transition-colors duration-150 font-headline text-sm;
+  }
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label;
+  }
+  .live-dot {
+    @apply w-2 h-2 bg-red-500 rounded-full animate-pulse;
+  }
+}

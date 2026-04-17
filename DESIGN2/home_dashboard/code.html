@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VVCgoesUK - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#ffb68d",
+                        "surface-bright": "#fcf9f8",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#321200",
+                        "surface": "#fcf9f8",
+                        "inverse-on-surface": "#f3f0ef",
+                        "secondary": "#3b5aac",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#8ba8ff",
+                        "surface-container-high": "#ebe7e7",
+                        "background": "#fcf9f8",
+                        "primary": "#9a4600",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#763300",
+                        "on-background": "#1c1b1b",
+                        "tertiary-fixed-dim": "#8dcdff",
+                        "on-primary-container": "#572400",
+                        "tertiary": "#006493",
+                        "on-error": "#ffffff",
+                        "surface-container": "#f0edec",
+                        "on-surface-variant": "#574237",
+                        "on-secondary-container": "#143a8b",
+                        "secondary-fixed-dim": "#b3c5ff",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b70",
+                        "secondary-fixed": "#dbe1ff",
+                        "primary-container": "#f47920",
+                        "primary-fixed-dim": "#ffb68d",
+                        "on-secondary-fixed-variant": "#1f4293",
+                        "on-tertiary-fixed": "#001e30",
+                        "surface-variant": "#e5e2e1",
+                        "surface-tint": "#9a4600",
+                        "tertiary-fixed": "#cae6ff",
+                        "on-surface": "#1c1b1b",
+                        "on-tertiary-container": "#003753",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary-fixed": "#00184a",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dcd9d9",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "outline": "#8b7265",
+                        "inverse-surface": "#313030",
+                        "outline-variant": "#dec0b1",
+                        "surface-container-low": "#f6f3f2",
+                        "tertiary-container": "#00a5ef"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface antialiased pb-24">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-zinc-950 fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500" data-icon="menu">menu</span>
+<span class="text-blue-900 dark:text-blue-400 font-black after:content-['.'] after:text-orange-500 font-plus-jakarta text-2xl font-bold tracking-tighter">VVC</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<nav class="flex gap-6 text-sm tracking-wide">
+<a class="text-blue-900 dark:text-blue-400 font-bold" href="#">Matches</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors px-2 py-1" href="#">Team</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors px-2 py-1" href="#">Stats</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors px-2 py-1" href="#">Fund</a>
+</nav>
+<div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img alt="User" data-alt="close-up portrait of a young athlete with a friendly smile, clean minimalist lighting background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM7oeLL8hmW8bbMo-lWT1cgGgUNwX5N7NuDMAn813JGq5uJuTdIvW3MwJnUXCPDO6fJCiGj6Re_CBug_rByJ6NHqnVLTQBBbq1KtyNo5jOTlp7t7zBQL4uZExrWvwYbkc1d31GNmlz1mRWN1EOE11aS3HkGPL4xWPABIwFWDt8Gy1NRR2PQC2L5EPPOndPeLSgnHbfwJg5Er3ic3CaMdXhrQufnmQcI5GeimUzli54Yz9vBl7fzqPzCIxKL_oU1fYZHCkuP6712ud9"/>
+</div>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-zinc-500" data-icon="notifications">notifications</span>
+</div>
+</header>
+<main class="mt-20 px-6 max-w-5xl mx-auto">
+<!-- Live Match Section -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Current Fixtures</h2>
+<div class="flex items-center gap-2 bg-primary px-3 py-1 rounded-sm">
+<span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+<span class="text-[10px] font-bold text-white uppercase tracking-tighter">LIVE</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border-l-4 border-primary-container shadow-sm border-y border-r border-outline-variant/10 p-6 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-6 flex-1 justify-end">
+<span class="text-lg font-bold text-secondary">VVC UK</span>
+<div class="w-16 h-16 bg-surface-container-low rounded-lg flex items-center justify-center border border-outline-variant/20">
+<img alt="VVC Logo" class="w-10 h-10 object-contain" data-alt="professional minimalist football club crest with geometric shield and orange accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYDQpR4u1GjeF-ByRlkq4XuEgjH8fYiJofk-Lm0kLxccDxn9TfXjvBAMYf2diL_zUqr7FuwpaKM3TKqYsYJvWoxLWBhzN7EyPnpRLZqYeV4oKNJBNMGVdGBYhOyHcw5ligqKby5kgwMgliKoVTV0KzMHcQKXNXzkEX-rgfqJat4isoCoRb7ursBPvm9OqBYLIJgHuixx6fGRatMvAM97nVIRc20L-VfKwavNrgPnqc-EmEdl1TVSydPfsIn5mo1AW7Iney_LaZLYYT"/>
+</div>
+</div>
+<div class="flex flex-col items-center">
+<div class="text-5xl font-black tracking-tighter font-headline text-on-surface flex gap-4">
+<span>2</span>
+<span class="text-outline-variant">:</span>
+<span class="text-primary-container">1</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline mt-2">74' MIN</span>
+</div>
+<div class="flex items-center gap-6 flex-1 justify-start">
+<div class="w-16 h-16 bg-surface-container-low rounded-lg flex items-center justify-center border border-outline-variant/20">
+<img alt="Away Logo" class="w-10 h-10 object-contain" data-alt="traditional english football club emblem with a lion symbol and deep blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHGaYRfVxf4SiSCBEYkFMV_Sy1mt3BKL6lYbA6f5CkBolDcMIif3A5S7JP6JqpVesw_JX-b0HMlhbJjotp9uGtC4ESBLCf_Iv58eT7Dmplluf0jNVzwH3xClTvJMdvxa8PUB5u93fnJ1eFZ7x435I4Me0CWAGWKniWgAnT5jTjLawnuYQasnGBiMXb4tiOVW1hXxN4rgxBUpemjnKJr562mBseUkMZwl1C1oclxCnoa9toRCgIeLw7Ed6pY-b4a_vICJeI6LufxXFJ"/>
+</div>
+<span class="text-lg font-bold text-on-surface-variant">LOND AFC</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Donation & Nav Tiles -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<!-- Fundraising Card -->
+<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant/10 p-8 flex flex-col justify-between">
+<div>
+<h3 class="text-2xl font-extrabold tracking-tight mb-2">UK Tour Fund</h3>
+<p class="text-on-surface-variant text-sm max-w-md">Help our youth team compete in the International London Cup this summer. Every contribution fuels a dream.</p>
+</div>
+<div class="mt-8">
+<div class="flex justify-between items-end mb-3">
+<span class="text-4xl font-black font-headline text-primary-container">£12,450</span>
+<span class="text-sm font-bold text-outline">Target: £15,000</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[83%]"></div>
+</div>
+<div class="flex justify-between mt-4">
+<button class="bg-secondary text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity">Contribute</button>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline self-center">83% COMPLETE</span>
+</div>
+</div>
+</div>
+<!-- Navigation Tiles -->
+<div class="grid grid-cols-2 gap-4">
+<a class="bg-surface-container-low p-4 flex flex-col items-center justify-center text-center hover:bg-surface-container-high transition-colors border border-transparent hover:border-outline-variant/20" href="#">
+<span class="material-symbols-outlined text-secondary mb-2" data-icon="calendar_today">calendar_today</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface">Schedule</span>
+</a>
+<a class="bg-surface-container-low p-4 flex flex-col items-center justify-center text-center hover:bg-surface-container-high transition-colors border border-transparent hover:border-outline-variant/20" href="#">
+<span class="material-symbols-outlined text-secondary mb-2" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface">Crowdfund</span>
+</a>
+<a class="bg-surface-container-low p-4 flex flex-col items-center justify-center text-center hover:bg-surface-container-high transition-colors border border-transparent hover:border-outline-variant/20" href="#">
+<span class="material-symbols-outlined text-secondary mb-2" data-icon="photo_library">photo_library</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface">Gallery</span>
+</a>
+<a class="bg-surface-container-low p-4 flex flex-col items-center justify-center text-center hover:bg-surface-container-high transition-colors border border-transparent hover:border-outline-variant/20" href="#">
+<span class="material-symbols-outlined text-secondary mb-2" data-icon="child_care">child_care</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface">Kids</span>
+</a>
+</div>
+</div>
+<!-- Activity Feed -->
+<section class="mb-12">
+<h2 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label mb-6">Match Activity</h2>
+<div class="relative pl-6 border-l border-outline-variant/30 space-y-8">
+<!-- Goal Item -->
+<div class="relative">
+<div class="absolute -left-[27px] top-0 w-2.5 h-2.5 bg-primary-container rotate-45"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Goal Scored! — Marcus Sterling</p>
+<p class="text-sm text-on-surface-variant">Clinical finish from the edge of the penalty area.</p>
+</div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">71'</span>
+</div>
+</div>
+<!-- Substitution Item -->
+<div class="relative">
+<div class="absolute -left-[27px] top-0 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-secondary"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Substitution</p>
+<p class="text-sm text-on-surface-variant">Leo Rossi <span class="text-outline">OFF</span> • Jamie Vane <span class="text-primary-container font-bold">ON</span></p>
+</div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">62'</span>
+</div>
+</div>
+<!-- Event Item -->
+<div class="relative">
+<div class="absolute -left-[27px] top-0 w-2.5 h-2.5 bg-outline-variant rotate-45"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Kick-off Second Half</p>
+<p class="text-sm text-on-surface-variant">The match resumes at Wembley Stadium Extension.</p>
+</div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">45'</span>
+</div>
+</div>
+<!-- Goal Item (Previous) -->
+<div class="relative">
+<div class="absolute -left-[27px] top-0 w-2.5 h-2.5 bg-primary-container rotate-45"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Goal Scored! — David Cho</p>
+<p class="text-sm text-on-surface-variant">Header from a well-placed corner kick.</p>
+</div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">12'</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-4 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 shadow-lg dark:shadow-none z-50">
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-400 relative after:content-[''] after:absolute after:top-1 after:right-4 after:w-1.5 after:h-1.5 after:bg-orange-500 after:rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta mt-1">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta mt-1">Team</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300" href="#">
+<span class="material-symbols-outlined" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta mt-1">Fund</span>
+</a>
+</nav>
+</body></html>

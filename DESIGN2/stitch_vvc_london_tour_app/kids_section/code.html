@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VVC Goes UK - Kids Section</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#ffb68d",
+                        "surface-bright": "#fcf9f8",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#321200",
+                        "surface": "#fcf9f8",
+                        "inverse-on-surface": "#f3f0ef",
+                        "secondary": "#3b5aac",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#8ba8ff",
+                        "surface-container-high": "#ebe7e7",
+                        "background": "#fcf9f8",
+                        "primary": "#9a4600",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#763300",
+                        "on-background": "#1c1b1b",
+                        "tertiary-fixed-dim": "#8dcdff",
+                        "on-primary-container": "#572400",
+                        "tertiary": "#006493",
+                        "on-error": "#ffffff",
+                        "surface-container": "#f0edec",
+                        "on-surface-variant": "#574237",
+                        "on-secondary-container": "#143a8b",
+                        "secondary-fixed-dim": "#b3c5ff",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b70",
+                        "secondary-fixed": "#dbe1ff",
+                        "primary-container": "#f47920",
+                        "primary-fixed-dim": "#ffb68d",
+                        "on-secondary-fixed-variant": "#1f4293",
+                        "on-tertiary-fixed": "#001e30",
+                        "surface-variant": "#e5e2e1",
+                        "surface-tint": "#9a4600",
+                        "tertiary-fixed": "#cae6ff",
+                        "on-surface": "#1c1b1b",
+                        "on-tertiary-container": "#003753",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary-fixed": "#00184a",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dcd9d9",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "outline": "#8b7265",
+                        "inverse-surface": "#313030",
+                        "outline-variant": "#dec0b1",
+                        "surface-container-low": "#f6f3f2",
+                        "tertiary-container": "#00a5ef"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased mb-24">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-white dark:bg-zinc-950 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-500">menu</span>
+<span class="font-plus-jakarta text-2xl font-bold tracking-tighter text-blue-900 dark:text-blue-400 after:content-['.'] after:text-orange-500">VVC.</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-zinc-500 dark:text-zinc-400 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 px-3 py-1 rounded transition-colors" href="#">Matches</a>
+<a class="text-blue-900 dark:text-blue-400 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 px-3 py-1 rounded transition-colors" href="#">Team</a>
+<a class="text-zinc-500 dark:text-zinc-400 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 px-3 py-1 rounded transition-colors" href="#">Stats</a>
+<a class="text-zinc-500 dark:text-zinc-400 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 px-3 py-1 rounded transition-colors" href="#">Fund</a>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up profile avatar of a smiling young boy with curly hair in a sports jersey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD34CcTjWMJGx5-tIUe1OMhwxWX9vPv1xKgFKDsE8pZFDHgx29RK5rOKc1t6jQRHtj3n8wCBI6XOfH7wtrpc1a5aEWAVyCne9ibg-gobZOzdetAU_4fUJ8tSH4L-LhazybzI_PuQ04aJ8SredbmpbnnMBsDo4tH89Jle0aeMeolzaq7EO9kfKzAGow7xmI77yIMwL7ulttCQMvKZ4Iufb2A013aQtdkzWqHOKZuEyCgecMKIlH1YFLORz7-sIvfRD3HELaPnAjeAuT_"/>
+</div>
+</div>
+</nav>
+<div class="bg-zinc-100 dark:bg-zinc-900 h-px w-full fixed top-16 z-50"></div>
+<main class="pt-24 px-6 max-w-7xl mx-auto space-y-12">
+<!-- Hero Header -->
+<header class="space-y-2">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Academy Division</span>
+<h1 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-secondary leading-none">UK TOUR <br/>KIDS HUB.</h1>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Leaderboard Section (Col-span 4) -->
+<section class="md:col-span-4 bg-surface-container-lowest p-8 rounded-xl ring-1 ring-outline-variant/10 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-bold tracking-tight">Top Scorers</h2>
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold text-outline">01</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="young boy smiling in a red soccer jersey with park background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqhEReIgHZDkgYQAhLx83qJ2OnI6yQSWubTI_zkaWSd9WmqsgTFskjqikUGhfCwOjIxBI4FmMMgkAr0IXWWtj-WZA2aeVs5Ags1B_V1tgYH47fHPgGPWcx5v9NI9VSugs6fplibPEFF_MclKxr6BihNuL_viLiop_WP2UeERnikuaAHjepTMB0i5EcF3mz8DKKzqbKMcgUFsu3dDjC_qJWupqNntaRiCmhPySexTa_KwrUboPs2K8r388Wm7cgu3ZtQxrs90gyFQo_"/>
+</div>
+<span class="font-bold text-on-surface">Jack Thompson</span>
+</div>
+<span class="text-primary-container font-bold">12 Goals</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold text-outline">02</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="young girl with braided hair wearing a white and blue athletic jersey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdlEcKHdi1iQllnPbIcMpDkO1nTnfU1FD7SUVR77s9REfuSPa4dRZ2r7bZAyz90V5o164zJpGMLgRQtJbkC2ZE3Udl_nQ52pRG_nq0JOGUMjh_JaVoGrBVKrGbHuW4-Pq9cBBf91IPgllQ09JMOadgZpYTEUhZ8-SHGWf_1dEY1WLXPLyoeioXQt3_lnU4U8fQTAa6s1lXJPrkuPy1E7hJ31D5xZ4NW2dACCd8QjFt8UP7vTHqAebcWapT502lm1w6UaPMx3vaXmoy"/>
+</div>
+<span class="font-bold text-on-surface">Leo Richards</span>
+</div>
+<span class="text-primary-container font-bold">9 Goals</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold text-outline">03</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="young goalkeeper catching a soccer ball mid-air during practice" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMzjoim_2s6aKjQ3rIOBuB26JJjCOFLjfIU3X17lunjO0Uon_yWnVj45ecVzMG2-YLSgqJGPu1RAKt5BUl21XyBcKVwgPBVjekC7gn1nT_nP0CFUzKM0rhm1fzkaUyX12ngrGmlSOE6-FCi8jxrjvz7cuB0u7bmoiqANz8pdlcCzXcsxPdopGx-0erarPS-msM9rKQy9oJEFDGUD3D4Q-2JDT8q0X0bUUNLXzclloRjhS1X8FUdLFvYA4rHFBWrownfd2DQRgWfOKk"/>
+</div>
+<span class="font-bold text-on-surface">Mason Gray</span>
+</div>
+<span class="text-primary-container font-bold">7 Goals</span>
+</div>
+<div class="flex items-center justify-between opacity-50">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold text-outline">04</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="young boy in athletic gear looking determined at the camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_dGNMlChxCkAQFndnzfPMHCHKuA_CTs-UriHAGPW25YKkwroLQmNVv1SVOiDY0yw1H5vC7D8z1ivGXBOKrX-5kHpGtbbtim6kehMT5kglIgV0MZXWzaeBOyDIBRSQsNQYCqwQ5N3gbEsLYlvINfLKrRcqIB6x5OcKgp54gFe64y2n9apiykWgb7e0dnmmBcWGZDiYwStyiuUwPQ3jUq5dssAr_asiDotCs_wDl-GSRi6Dq-NPlOGbg2ZGlXj0e2dbQKl_sPo439Zg"/>
+</div>
+<span class="font-bold text-on-surface">Oscar Wells</span>
+</div>
+<span class="text-primary-container font-bold">6 Goals</span>
+</div>
+</div>
+<button class="w-full mt-10 py-3 text-[10px] font-bold tracking-widest uppercase text-secondary border border-secondary rounded-lg hover:bg-secondary/5 transition-colors">View Full Table</button>
+</section>
+<!-- Tour Diary (Col-span 8) -->
+<section class="md:col-span-8 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold tracking-tight">Tour Diary</h2>
+<span class="text-[10px] font-bold tracking-widest uppercase text-outline-variant">Volume 01</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<article class="bg-white p-8 rounded-xl ring-1 ring-outline-variant/10 shadow-sm flex flex-col justify-between aspect-square md:aspect-auto min-h-[300px]">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline mb-4">Monday, Oct 14</p>
+<blockquote class="text-2xl font-bold italic tracking-tight text-on-surface leading-tight">
+                                "Winning against the London Academy was the best moment of my life. The rain didn't even matter!"
+                            </blockquote>
+</div>
+<div class="flex items-center gap-3 mt-8">
+<div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-[10px] font-bold">TH</div>
+<p class="text-xs font-bold text-on-surface">Toby Harrison, U12 Captain</p>
+</div>
+</article>
+<article class="bg-white p-8 rounded-xl ring-1 ring-outline-variant/10 shadow-sm flex flex-col justify-between aspect-square md:aspect-auto min-h-[300px]">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline mb-4">Tuesday, Oct 15</p>
+<blockquote class="text-2xl font-bold italic tracking-tight text-on-surface leading-tight">
+                                "The stadium tour at Wembley was incredible. I can see myself playing here one day."
+                            </blockquote>
+</div>
+<div class="flex items-center gap-3 mt-8">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-[10px] font-bold">SC</div>
+<p class="text-xs font-bold text-on-surface">Sam Chen, Forward</p>
+</div>
+</article>
+</div>
+</section>
+<!-- Photo Challenge (Col-span 12) -->
+<section class="md:col-span-12 space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-bold tracking-tight">Photo Challenge</h2>
+<span class="bg-primary px-2 py-0.5 rounded-md text-[10px] font-bold text-white uppercase tracking-wider">Active</span>
+</div>
+<p class="text-xs font-medium text-outline-variant">Theme: "The Perfect Header"</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+<div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden group relative ring-1 ring-outline-variant/5">
+<img class="w-full h-full object-cover" data-alt="action shot of a young soccer player performing a header during a sunset match" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCax-1JtylHJXnvjsPhkAHn04zf5y6G5K8gXPwt5oWIQORrNSrqcgO8ybfjuQI0lVzUPyyAPUCG9GIgpigwiwiccpQ0pkZc5_BBK1kTAqDNAz9RvNS19vVwhnfSw0umeT4j_FEtRA56Iit5yURAvVKxj0zM0egpRSiwjxEIClyL81yPGjEhLEC6NM05yrzt7V2978UYKq6UC3pRy2H_gnMbfgYWL-M8W7K2-mfOOBPn4d3oJSfr6-qf-ZiUH6_qRdJb427McbSPBpev"/>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden group relative ring-1 ring-outline-variant/5">
+<img class="w-full h-full object-cover" data-alt="dramatic wide angle shot of a soccer ball flying through the air on a green pitch" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTf8jYsOFsu6tk6XhbYHEjE6vGoT_VfVA2E7pe2J6ubZoldTZc7gxJivDX-r_gzfRyGVvir7O0gyp4XwYvE_1yYJi32xgaTJ61TxGV8wpw-WUvzKixj2UbX8L4wQITIorNtT0kNebXn5bu1wm_xACJYFbtDD5YMjeT1kNAK8XFcvCxX0Bx9uCuOQq0Xit8WVhn77XbtAzty_aS28_QPMnklL7OlN3p6TWrbRMfArBgsN2YeAYXLAgClwRV69XwWSp_dXGckl5vDQx2"/>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden group relative ring-1 ring-outline-variant/5">
+<img class="w-full h-full object-cover" data-alt="kids celebrating a goal together with high fives on a turf field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqKgBaig2FUocq1Q3ApgPBHl1PCQsC4EBCTTTCeYjGeLvV6by6S5WB9tqPzMj5RMtla_Bj1TGrHvuLblA0L0_rhN073B8gjfP-Dy4qs5U6xPJ8qa3hqJnCfEFT3k0QHO3Yz3byuJOPUXqsnRqyRgyfTe4UtPVh9yplkZchdHtmYX93lQoO_Aqv9QFn3KF2xkRUrqgeZfh8vdyRYMhxK5RD4fIuKvBFbvnSOcm7uA3PuzvYVn_VOG4oU1A_tCr25D3E2ytiUVOz-QVS"/>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-lg overflow-hidden group relative ring-1 ring-outline-variant/5">
+<img class="w-full h-full object-cover" data-alt="low angle shot of soccer cleats stepping on a ball with motion blur" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGUobDStpIq8g0MWK-R9N-hYt4I8b7Ia9WztxzyW0JKSdnfvm37Kb8ymS7bTx-EBCxnF5o8Wta4RRommW9_oD7iSjxC0Q4IMt2lK2hSW9yby91aJEHwJUuhX4CvOiSGT99RQQvtF6NejTJdRiI7v0CQ8KRlUEVoUGzM_WLC4_pnEwDDcfsTDGyJaYUpOoA9hYqj1PI9S6Y2-1eXJekSvsVd4pMC4vlNGzTS4DnoNoa46EVFzKtUcFyVrIGS_p6oFlJ6zNS1UsfShqr"/>
+</div>
+<div class="aspect-square border-2 border-dashed border-outline-variant/30 rounded-lg flex flex-col items-center justify-center gap-3 group hover:bg-white transition-all cursor-pointer">
+<span class="material-symbols-outlined text-outline-variant text-4xl">add_a_photo</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Participate</span>
+</div>
+</div>
+</section>
+<!-- Extra: Today's Schedule (Bento Style) -->
+<section class="md:col-span-12 bg-secondary text-white p-8 rounded-xl flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="space-y-2 text-center md:text-left">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] opacity-70">Coming up next</p>
+<h2 class="text-3xl font-bold tracking-tighter">U14 vs Brighton Seagulls</h2>
+<p class="text-sm font-medium opacity-80">Kick-off: 14:30 PM • American Express Stadium</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-lg font-bold text-sm tracking-tight active:scale-95 duration-150">Live Tracker</button>
+<button class="bg-white/10 text-white px-6 py-3 rounded-lg font-bold text-sm tracking-tight active:scale-95 duration-150 backdrop-blur-md">Match Info</button>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-4 bg-white dark:bg-zinc-950 shadow-lg dark:shadow-none z-50 border-t border-zinc-200 dark:border-zinc-800">
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">sports_soccer</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">groups</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Team</span>
+</a>
+<!-- ACTIVE TAB: Kids (Mapped from Team/Stats context) -->
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-400 relative after:content-[''] after:absolute after:top-1 after:right-4 after:w-1.5 after:h-1.5 after:bg-orange-500 after:rounded-full" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 hover:text-blue-700 dark:hover:text-blue-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">volunteer_activism</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Fund</span>
+</a>
+</nav>
+</body></html>

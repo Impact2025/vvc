@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gallery | VVCgoesUK</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .pro-aspect {
+            aspect-ratio: 4 / 5;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#ffb68d",
+                    "surface-bright": "#fcf9f8",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed": "#321200",
+                    "surface": "#fcf9f8",
+                    "inverse-on-surface": "#f3f0ef",
+                    "secondary": "#3b5aac",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#8ba8ff",
+                    "surface-container-high": "#ebe7e7",
+                    "background": "#fcf9f8",
+                    "primary": "#9a4600",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#763300",
+                    "on-background": "#1c1b1b",
+                    "tertiary-fixed-dim": "#8dcdff",
+                    "on-primary-container": "#572400",
+                    "tertiary": "#006493",
+                    "on-error": "#ffffff",
+                    "surface-container": "#f0edec",
+                    "on-surface-variant": "#574237",
+                    "on-secondary-container": "#143a8b",
+                    "secondary-fixed-dim": "#b3c5ff",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004b70",
+                    "secondary-fixed": "#dbe1ff",
+                    "primary-container": "#f47920",
+                    "primary-fixed-dim": "#ffb68d",
+                    "on-secondary-fixed-variant": "#1f4293",
+                    "on-tertiary-fixed": "#001e30",
+                    "surface-variant": "#e5e2e1",
+                    "surface-tint": "#9a4600",
+                    "tertiary-fixed": "#cae6ff",
+                    "on-surface": "#1c1b1b",
+                    "on-tertiary-container": "#003753",
+                    "primary-fixed": "#ffdbc9",
+                    "on-secondary-fixed": "#00184a",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#dcd9d9",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "outline": "#8b7265",
+                    "inverse-surface": "#313030",
+                    "outline-variant": "#dec0b1",
+                    "surface-container-low": "#f6f3f2",
+                    "tertiary-container": "#00a5ef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface pb-32">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-white dark:bg-zinc-950 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+<span class="text-blue-900 dark:text-blue-400 font-black after:content-['.'] after:text-orange-500 font-plus-jakarta text-2xl font-bold tracking-tighter">VVC</span>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<span class="text-zinc-500 dark:text-zinc-400 font-bold text-sm tracking-widest uppercase">Matches</span>
+<span class="text-zinc-500 dark:text-zinc-400 font-bold text-sm tracking-widest uppercase">Team</span>
+<span class="text-blue-900 dark:text-blue-400 font-bold text-sm tracking-widest uppercase">Stats</span>
+<span class="text-zinc-500 dark:text-zinc-400 font-bold text-sm tracking-widest uppercase">Fund</span>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img alt="User Profile" data-alt="close-up portrait of a professional sports photographer smiling against a blurred stadium background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh8wSrLdC9dQORrJ_JThpH0kP8FHiU_gZFcGkZzZR_ePdwOiIpF07dkHU5CBJvKSfEIFpuuX9yHcvA4jpqq65iLwShviv5RggLbo3M9rx8r17M_NtzxhfESUJDe_GsJNOFtY5s-kqczuEv41jW7n3EWAFhZtCESfYaz3m07mA22XhWqKmwK-1gotBKw8Fd0SCcxcfl5spn7SfZtSVmKbYta2YlHse1bh2kktmk4KBXeYO6D0YZRm_RDXS4qG6id7ANwHKKKwboYEQt"/>
+</div>
+</header>
+<div class="h-1 w-full fixed top-16 z-50 bg-zinc-100 dark:bg-zinc-900"></div>
+<main class="mt-24 px-6 max-w-7xl mx-auto">
+<!-- Hero Section: Featured Content -->
+<section class="mb-16">
+<div class="flex flex-col md:flex-row gap-12 items-end mb-12">
+<div class="max-w-2xl">
+<span class="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-4 block">Tour Gallery 2024</span>
+<h1 class="text-5xl md:text-7xl font-extrabold text-secondary tracking-tighter leading-none mb-6">Capture the <br/>Journey.</h1>
+<p class="text-on-surface-variant text-lg max-w-md">Documentation of our 2024 UK Developmental Tour, featuring action from the Premier League academies.</p>
+</div>
+</div>
+<!-- Man of the Match Feature -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
+<div class="lg:col-span-8 relative overflow-hidden group rounded-lg border border-outline-variant/10">
+<img alt="MOTM Action" class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="dramatic wide shot of a youth soccer player celebrating a goal under stadium floodlights with blurred fans in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQhx996jypzXOgls47EfEpjgNtJNKCLf6_vc7FcmzGSVan7Z3OIGHj0cXu-2eCMOnbwY0j-6eYIMIGkHEDexVwirp0fbmoxLtB0yQk6A0oI8gHPWQMytnJ_gs0zh_O-9hAdKwBBNQFAoH0oyQ5EaxLd8Kp3TnKMnn09lkRCGEx0mIJDRKAABfDtJYBjAko7kLdQW6wXRkKLrdFa63Xlg28iVjrgv7vI7Ki1tTvUDhXf6K1jhDCL6W4NGNlSLQEa2BDSg3VVtfYipxr"/>
+<div class="absolute top-6 left-6">
+<span class="bg-primary text-white px-4 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase rounded-sm">Featured Shot</span>
+</div>
+</div>
+<div class="lg:col-span-4 flex flex-col justify-center">
+<h3 class="text-secondary text-xs font-black uppercase tracking-widest mb-2">Man of the Match</h3>
+<h2 class="text-4xl font-bold tracking-tight mb-4 text-on-surface">Alex "Thunder" Chen</h2>
+<p class="text-on-surface-variant mb-8 leading-relaxed">Recognized for an exceptional performance during the London Derby showcase. 2 Goals, 1 Assist.</p>
+<button class="w-fit px-8 py-4 border-2 border-primary-container text-primary font-bold uppercase tracking-widest text-xs hover:bg-primary-container hover:text-white transition-all duration-300">
+                        View Player Stats
+                    </button>
+</div>
+</div>
+</section>
+<!-- Match Gallery Sections -->
+<!-- Section: West Ham United -->
+<section class="mb-20">
+<div class="flex items-baseline gap-4 mb-8">
+<h2 class="text-secondary text-2xl font-bold font-headline italic tracking-tight">vs West Ham United</h2>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+<span class="text-on-surface-variant/40 font-bold text-xs uppercase tracking-widest">12 Photos</span>
+</div>
+<div class="masonry-grid">
+<!-- Photo Card 1 -->
+<div class="group relative bg-white border border-outline-variant/20 p-2 overflow-hidden">
+<div class="overflow-hidden mb-3">
+<img alt="Match Action 1" class="w-full aspect-square object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="dynamic close-up of soccer cleats striking a ball on a vibrant green grass pitch with morning dew spray" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDauki9uaKSTCJyyjRzV4GDAg4CdFuWWUJI5bkQGTzWcs1zrnJtXZZNMnsqTRVMFx7lAUdonAQXw1UClv1ZNhSiCNVSLLTixHrEcyLwE3_gUTZSB8GCI9-LP9zCs8VoXAwrqDoaZezqkdrUOa9J4A8Hze_c-9-zeD2hyu6kXXY7QGTMdISbdvBuXyd9the83rVyJcYvCmovVRnLfwTA_Zy5_ZsIGYGfOPHmzOo83V6GNeE25-5U-l5XkeDDWAyBg4b3v1AkczhzDofk"/>
+</div>
+<div class="px-2 pb-2">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Match Prep</p>
+</div>
+</div>
+<!-- Photo Card 2 (Large) -->
+<div class="group relative bg-white border border-outline-variant/20 p-2 overflow-hidden md:row-span-2">
+<div class="overflow-hidden h-full">
+<img alt="Match Action 2" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="tall vertical shot of a young athlete looking up at the massive stands of a professional UK football stadium" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0USx2uorI4SV3CqYwF3BGHPAmoZXfmVA5qJe334Ss9XtErUoRlAo9NCBAnnZlcEA4VSXE08JYKP7KG3_OR85qiQw-Oj4XYoUzY7qcN6AsproCGOuUbJXG7C8JizZsCGi8o1WRr312XXsh4FALzMKsjMxh9P3sLLATfLgKtg25gjF0DNVme3oxZnyvnmIgzebggD9BVIcxjcnYFPSvCyY50vEHXiRi3y2fjjXCTEBfDReS2bHSFEjd5HY0rfKRVZxd3xWY_USnp1Bb"/>
+</div>
+<div class="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white font-bold text-xs bg-secondary/80 px-3 py-1">London Stadium</span>
+</div>
+</div>
+<!-- Photo Card 3 -->
+<div class="group relative bg-white border border-outline-variant/20 p-2 overflow-hidden">
+<div class="overflow-hidden mb-3">
+<img alt="Match Action 3" class="w-full aspect-square object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="abstract shot of players forming a huddle with hands joined in the center, high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5wZSs3lhLxC9IbQctn6O6KXxMJSrOMW5jlBGPIFg16GMOf9d2L0aaXg1xBLoxHDZ4vf0_gFZpk9sDjPxGAv021_-vI1HhyF0Zbh9k_NPqPBwr6m8h8CxvtwUh8dbD0uyIN4_ZdeImkERyUAlkTP9R82bMeM0XSz0bUTcO3AskeqVi0vNEQlTCoYb6UCqfe5BnF479q5nQqu-agFZG-0JuhjmLD9hOH7-GCR7Pf63GSA732B1ZDkrsq0R5dWjF5044ijLz9SufexJg"/>
+</div>
+<div class="px-2 pb-2">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Team Spirit</p>
+</div>
+</div>
+<!-- Photo Card 4 -->
+<div class="group relative bg-white border border-outline-variant/20 p-2 overflow-hidden">
+<div class="overflow-hidden mb-3">
+<img alt="Match Action 4" class="w-full aspect-square object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="mid-air action shot of a soccer player heading the ball during a corner kick with dramatic sky background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM6irsMD8B6K52wOw5d8f-U5ZXUA-L3nbRKjV0fvB5Vh6uUuM6s-Kx6w3lgxr5HWoch2Mj-0doYpr_SybawwggXHZLvjM4P7qEVPK5HZgpRmX5orOtTkRb1PN8ihHpoynoJns1tLZVozaYxazRBPGr_rXm9aT8RDpOuXdRne7GC-DbwLNKzvrt0PCpFSJB8qLFpfI4pdhY10clbTr45HCCAsh0w4QCfH94Oy5cQPG49HAuB41medV80zU-p18DUajt3aJsAjDArk1d"/>
+</div>
+<div class="px-2 pb-2">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Set Piece</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Chelsea FC -->
+<section class="mb-20">
+<div class="flex items-baseline gap-4 mb-8">
+<h2 class="text-secondary text-2xl font-bold font-headline italic tracking-tight">vs Chelsea FC</h2>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+<span class="text-on-surface-variant/40 font-bold text-xs uppercase tracking-widest">8 Photos</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="aspect-square bg-white border border-outline-variant/20 overflow-hidden">
+<img alt="Chelsea 1" class="w-full h-full object-cover" data-alt="close-up of a blue team jersey with embroidered club crest and high-quality fabric texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3A9nUojbFPZdTHMA0A2sKJBT7JcuREyeqPDLGHflUBa6V67T03Yo6ClSTo4u8qcb-HtOH5d4jQ-H1hqdbm7fDPyxdRJSDbvNBYDw98bD_Lu39Swa1Ism0uZ2VnGZM1kPVXABQ1q8gHL5iUbdhB0ILmwt-_-J_08fG4w9fPbk4pJhN7-OW5O-d5pCPh0KNLmh7f8jXMInq_tESWw-NL18cuHQg8nzQ5hdx7Lr-gnR5dMqOpVKTcgn_NMIQHO9A3bfD0zcYFDpGwzkv"/>
+</div>
+<div class="aspect-square bg-white border border-outline-variant/20 overflow-hidden">
+<img alt="Chelsea 2" class="w-full h-full object-cover" data-alt="low angle shot of a goalkeeper diving to save a shot in a modern glass-walled training facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDBALb6MCTpCxgAK-ox-gd1Rb55C0ASFuNZ_P2Wpf3zxca8HNMGDaAEhDpbZu7q4DOQUkq0-u8EtHmQIbk-WICnXhpoiiMhleDqFQHioUUWVKBrwy12bmz1kwMiT_03SeMv1M0psb-8ulaYbE2t2eikanxLx2yIYYmSGEs_52xCCQoiJZSVn9DAOz-dhntU53S4uOBAuagiiJ4ILYXNBKh5aHhT_qXYkm50IP2GXrv9NTj0vxmBD5I-LqrCDo-z0MFYC7Lrt9zdMY0"/>
+</div>
+<div class="aspect-square bg-white border border-outline-variant/20 overflow-hidden">
+<img alt="Chelsea 3" class="w-full h-full object-cover" data-alt="view of a neatly manicured soccer field with white boundary lines and corner flag in sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWQnYu2Yd9wKwulkQUu8Rx0E-a6xtX0D8VrPTs8l2lyUZZDVp7V6M0rOrgzciypIrvaEXEpwitwt6OybmjnBNZ_Wlsg99z4taIM2RWGL0ayijU9Z9k3vUguwTt-11CCuicqEKM0eRBWoI85vCl6zvO1w-3x1tldWS4h4wCf48P6-7zD2O4cguLudvSgH4GtiodqcmIlP9Yw2DI9KxCh8PsqonLHG-AjfSapnZpbx15RkFad-4m_AzqVnKLoHYE4sL7MfsibBtgFpdQ"/>
+</div>
+<div class="aspect-square bg-white border border-outline-variant/20 overflow-hidden">
+<img alt="Chelsea 4" class="w-full h-full object-cover" data-alt="lifestyle shot of youth players laughing together on a team bus with rainy window in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCYjVoW_l-WDn3l41buHkDJ2E4zFjBvpDAeWDTCZhqxvGyiMQpeX0e_vVJwMqTxKMtuPq6v4TQecCL8L5XQdgKLVMEFNVOqSeCtKCRmgHFKHjrTqE18FOoA21jSFecV94gDp6FD69V-97M-6EP8Be4RLhy5HdQ9lVKkZQxSnYiXnC5XhClKlcQzfy6LosoKfB57Au6RQ5fZbSJ3MXqPYfsh2ZZGWA4CiPHDTMm8bILWv7z8NiMoMr0QGz16w9t9Mck9HQ48-NriSbn"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-4 bg-white dark:bg-zinc-950 shadow-lg dark:shadow-none z-50 md:hidden">
+<div class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600">
+<span class="material-symbols-outlined mb-1">sports_soccer</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Matches</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600">
+<span class="material-symbols-outlined mb-1">groups</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Team</span>
+</div>
+<div class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-400 relative after:content-[''] after:absolute after:top-1 after:right-4 after:w-1.5 after:h-1.5 after:bg-orange-500 after:rounded-full">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Stats</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600">
+<span class="material-symbols-outlined mb-1">volunteer_activism</span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-plus-jakarta">Fund</span>
+</div>
+</nav>
+</body></html>
