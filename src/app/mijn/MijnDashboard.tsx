@@ -285,7 +285,7 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4">
+    <div className="fixed inset-0 z-[60] bg-black/60 flex items-end sm:items-center justify-center p-4 pb-20 sm:pb-4">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-outline-variant/10">
           <h2 className="font-headline font-bold text-on-surface">Foto uploaden</h2>
@@ -297,7 +297,7 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
           {status === "done" ? (
             <div className="text-center py-6">
               <CheckCircle size={48} className="text-green-500 mx-auto mb-3" />
-              <p className="font-bold text-on-surface text-lg">Ingediend!</p>
+              <p className="font-bold text-on-surface text-lg">Geplaatst!</p>
               <p className="text-sm text-on-surface-variant mt-1 mb-5">Wordt goedgekeurd door de beheerder.</p>
               <button onClick={onSuccess} className="bg-primary-container text-white font-bold rounded-xl px-6 py-2.5 text-sm">Sluiten</button>
             </div>
@@ -324,7 +324,7 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
                 {matches.map((m) => <option key={m.id} value={m.id}>VVC vs {m.opponent}</option>)}
               </select>
               <button onClick={handleSubmit} disabled={!file || status === "uploading"} className="w-full bg-primary-container text-white font-bold rounded-xl py-3 text-sm disabled:opacity-50">
-                {status === "uploading" ? "Uploaden..." : "Indienen"}
+                {status === "uploading" ? "Uploaden..." : "Plaatsen"}
               </button>
               {status === "error" && <p className="text-red-500 text-xs text-center mt-3">Upload mislukt. Probeer opnieuw.</p>}
             </>

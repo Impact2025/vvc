@@ -71,7 +71,7 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 z-[60] bg-black/60 flex items-end sm:items-center justify-center p-4 pb-20 sm:pb-4 animate-fade-in">
           <div className="bg-surface-container-lowest rounded-2xl w-full max-w-md shadow-xl">
             <div className="flex items-center justify-between px-6 pt-6 pb-4">
               <h2 className="font-headline font-bold text-on-surface">Foto uploaden</h2>
@@ -87,7 +87,7 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
               {status === "done" ? (
                 <div className="text-center py-8">
                   <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
-                  <p className="font-headline font-bold text-on-surface text-lg">Foto ingediend!</p>
+                  <p className="font-headline font-bold text-on-surface text-lg">Foto geplaatst!</p>
                   <p className="text-sm text-on-surface-variant mt-1 mb-6">
                     Wordt goedgekeurd door de beheerder.
                   </p>
@@ -152,7 +152,7 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
                     disabled={!file || status === "uploading"}
                     className="btn-primary w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {status === "uploading" ? "Uploaden..." : "Indienen"}
+                    {status === "uploading" ? "Uploaden..." : "Plaatsen"}
                   </button>
 
                   {status === "error" && (
