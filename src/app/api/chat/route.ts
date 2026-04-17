@@ -65,7 +65,7 @@ ${contextBlock}`;
       body: JSON.stringify({
         model: "anthropic/claude-3.5-haiku",
         stream: false,
-        max_tokens: 400,
+        max_tokens: 200,
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
