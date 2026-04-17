@@ -62,6 +62,7 @@ export const players = pgTable("players", {
   assists: integer("assists").default(0),
   photo_url: text("photo_url"),
   position: varchar("position", { length: 100 }),
+  award: varchar("award", { length: 100 }),
 });
 
 // ─── Diary Entries ───────────────────────────────────────────────────────────

@@ -12,10 +12,21 @@ interface Player {
   assists: number | null;
   photo_url: string | null;
   position: string | null;
+  award: string | null;
 }
 
 const emptyForm = { name: "", number: "", position: "" };
 const positions = ["Keeper", "Verdediger", "Middenvelder", "Aanvaller"];
+const awards = [
+  "🔥 Beste Inzet",
+  "🤝 Fair Play",
+  "😂 Grappigste Speler",
+  "🦁 Dapperste Speler",
+  "🎯 Meeste Kansen",
+  "🌟 Beste Verdediger",
+  "🏃 Snelste Speler",
+  "🧤 Beste Keeper",
+];
 
 export default function SpelersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -84,6 +95,21 @@ export default function SpelersPage() {
       setPlayers((prev) =>
         prev.map((p) => (p.id === player.id ? { ...p, [field]: newVal } : p))
       );
+    } catch {
+      toast.error("Opslaan mislukt");
+    }
+  };
+
+  const handleAwardChange = async (player: Player, award: string) => {
+    try {
+      const res = await fetch(`/api/players/${player.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ award: award || null }),
+      });
+      if (!res.ok) throw new Error();
+      setPlayers((prev) => prev.map((p) => (p.id === player.id ? { ...p, award: award || null } : p)));
+      toast.success(award ? "Award ingesteld" : "Award verwijderd");
     } catch {
       toast.error("Opslaan mislukt");
     }
@@ -206,6 +232,7 @@ export default function SpelersPage() {
                   <th className="text-left py-2 pr-4 font-semibold text-on-surface-variant text-xs">Positie</th>
                   <th className="text-center py-2 pr-4 font-semibold text-on-surface-variant text-xs">Goals</th>
                   <th className="text-center py-2 pr-4 font-semibold text-on-surface-variant text-xs">Assists</th>
+                  <th className="text-left py-2 pr-4 font-semibold text-on-surface-variant text-xs">Award</th>
                   <th className="text-right py-2 font-semibold text-on-surface-variant text-xs">Acties</th>
                 </tr>
               </thead>
@@ -243,6 +270,16 @@ export default function SpelersPage() {
                         <span className="text-on-surface font-bold w-5 text-center">{player.assists ?? 0}</span>
                         <button onClick={() => handleStatChange(player, "assists", 1)} className="w-6 h-6 rounded border border-outline-variant/30 text-primary-container hover:bg-primary-container/10 text-sm leading-none flex items-center justify-center font-bold">+</button>
                       </div>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <select
+                        value={player.award ?? ""}
+                        onChange={(e) => handleAwardChange(player, e.target.value)}
+                        className="text-xs border border-outline-variant/30 rounded-lg px-2 py-1.5 bg-white focus:border-primary-container focus:outline-none max-w-[160px]"
+                      >
+                        <option value="">— geen —</option>
+                        {awards.map((a) => <option key={a} value={a}>{a}</option>)}
+                      </select>
                     </td>
                     <td className="py-3 text-right">
                       <div className="flex items-center justify-end gap-2">

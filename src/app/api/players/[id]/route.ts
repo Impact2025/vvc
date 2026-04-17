@@ -11,7 +11,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const id = parseInt(params.id);
     const body = await req.json();
-    const { name, number, goals, assists, position, photo_url } = body;
+    const { name, number, goals, assists, position, photo_url, award } = body;
 
     const updateData: Partial<typeof players.$inferInsert> = {};
     if (name !== undefined) updateData.name = name;
@@ -20,6 +20,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     if (assists !== undefined) updateData.assists = assists;
     if (position !== undefined) updateData.position = position;
     if (photo_url !== undefined) updateData.photo_url = photo_url;
+    if (award !== undefined) updateData.award = award || null;
 
     const [updated] = await db
       .update(players)

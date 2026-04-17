@@ -6,6 +6,7 @@ import { asc, desc } from "drizzle-orm";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import TopBallers from "@/components/kids/TopBallers";
+import TourAwards from "@/components/kids/TourAwards";
 import type { Player, DiaryEntry } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 
@@ -75,6 +76,9 @@ export default async function KidsPage() {
         <section className="mb-12">
           <TopBallers players={allPlayers} />
         </section>
+
+        {/* Tour Awards */}
+        <TourAwards players={allPlayers} />
 
         {/* Tour Dagboek */}
         <section>
