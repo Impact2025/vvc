@@ -4,20 +4,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Calendar, Image, Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/schema", label: "Wedstrijden", icon: Calendar },
-  { href: "/fotos", label: "Foto's", icon: Image },
-  { href: "/kids", label: "Kids", icon: Star },
-  { href: "/doneren", label: "Steun ons", icon: Heart, orange: true },
-];
+import { useEffect, useState } from "react";
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/ouders/me")
+      .then((r) => r.json())
+      .then((d) => setLoggedIn(!!d?.id))
+      .catch(() => {});
+  }, []);
+
+  const navItems = [
+    { href: loggedIn ? "/mijn" : "/", label: "Home", icon: Home },
+    { href: "/schema", label: "Wedstrijden", icon: Calendar },
+    { href: "/fotos", label: "Foto's", icon: Image },
+    { href: "/kids", label: "Kids", icon: Star },
+    { href: "/doneren", label: "Steun ons", icon: Heart, orange: true },
+  ];
 
   function isActive(href: string) {
-    if (href === "/") return pathname === "/";
+    if (href === "/" || href === "/mijn") return pathname === "/" || pathname === "/mijn";
     return pathname.startsWith(href);
   }
 

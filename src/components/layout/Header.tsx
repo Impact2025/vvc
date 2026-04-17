@@ -3,9 +3,36 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, BellRing, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const output = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) output[i] = rawData.charCodeAt(i);
+  return output;
+}
+
+async function subscribeAndSave() {
+  const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  if (!vapidKey) return;
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) {
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey),
+    });
+  }
+  await fetch("/api/push/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ subscription: sub }),
+  });
+}
 
 interface ParentSession {
   id: number;
@@ -28,13 +55,44 @@ interface HeaderProps {
 export default function Header({ activePage }: HeaderProps) {
   const pathname = usePathname();
   const [parent, setParent] = useState<ParentSession | null>(null);
+  const [notifPerm, setNotifPerm] = useState<NotificationPermission | null>(null);
+  const [notifToast, setNotifToast] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/ouders/me")
       .then((r) => r.json())
       .then((data) => setParent(data))
       .catch(() => setParent(null));
+
+    if ("Notification" in window) {
+      setNotifPerm(Notification.permission);
+      navigator.serviceWorker?.register("/sw.js").catch(console.error);
+    }
   }, []);
+
+  async function handleBell() {
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
+
+    if (Notification.permission === "granted") {
+      showToast("Meldingen staan al aan ✓");
+      return;
+    }
+    if (Notification.permission === "denied") {
+      showToast("Sta meldingen toe in je browserinstellingen");
+      return;
+    }
+    const perm = await Notification.requestPermission();
+    setNotifPerm(perm);
+    if (perm === "granted") {
+      await subscribeAndSave().catch(console.error);
+      showToast("Meldingen aan! ✓");
+    }
+  }
+
+  function showToast(msg: string) {
+    setNotifToast(msg);
+    setTimeout(() => setNotifToast(null), 3000);
+  }
 
   const logout = async () => {
     await fetch("/api/ouders/logout", { method: "POST" });
@@ -49,7 +107,7 @@ export default function Header({ activePage }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-sm border-b border-outline-variant/10 shadow-sm">
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0">
+        <Link href={parent ? "/mijn" : "/"} className="flex items-center shrink-0">
           <Image
             src="/logo.png"
             alt="FC VVC Onder 10 Goes UK"
@@ -79,12 +137,24 @@ export default function Header({ activePage }: HeaderProps) {
         </nav>
 
         {/* Right actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
+          {notifToast && (
+            <div className="absolute right-10 top-10 bg-on-surface text-surface text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+              {notifToast}
+            </div>
+          )}
           <button
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
+            onClick={handleBell}
+            className={cn(
+              "w-9 h-9 flex items-center justify-center rounded-lg transition-colors",
+              notifPerm === "granted"
+                ? "text-primary-container"
+                : "text-on-surface-variant hover:bg-surface-container"
+            )}
             aria-label="Meldingen"
+            title={notifPerm === "granted" ? "Meldingen aan" : "Meldingen aanzetten"}
           >
-            <Bell size={18} />
+            {notifPerm === "granted" ? <BellRing size={18} /> : <Bell size={18} />}
           </button>
           {parent ? (
             <div className="flex items-center gap-2">
