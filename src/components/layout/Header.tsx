@@ -106,7 +106,7 @@ export default function Header({ activePage }: HeaderProps) {
           ) : (
             <Link
               href="/inloggen"
-              className="px-3 py-1.5 rounded-lg text-sm font-bold font-headline text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm font-bold font-headline border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
             >
               Inloggen
             </Link>

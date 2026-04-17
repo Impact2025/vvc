@@ -2,34 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Image, Star, User } from "lucide-react";
+import { Home, Calendar, Image, Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
-const baseItems = [
+const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/schema", label: "Wedstrijden", icon: Calendar },
   { href: "/fotos", label: "Foto's", icon: Image },
   { href: "/kids", label: "Kids", icon: Star },
+  { href: "/doneren", label: "Steun ons", icon: Heart, orange: true },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/ouders/me")
-      .then((r) => r.json())
-      .then((d) => setLoggedIn(!!d))
-      .catch(() => {});
-  }, []);
-
-  const navItems = [
-    ...baseItems,
-    loggedIn
-      ? { href: "/mijn", label: "Mijn", icon: User }
-      : { href: "/inloggen", label: "Inloggen", icon: User },
-  ];
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
@@ -39,7 +24,7 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-surface-container-lowest/95 backdrop-blur-sm border-t border-outline-variant/10">
       <div className="flex items-stretch h-16">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon, orange }) => {
           const active = isActive(href);
           return (
             <Link
@@ -47,12 +32,16 @@ export default function BottomNav() {
               href={href}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 gap-1 transition-colors duration-150",
-                active
+                orange
+                  ? active
+                    ? "text-[#f47920]"
+                    : "text-[#f47920]/70 hover:text-[#f47920]"
+                  : active
                   ? "text-primary-container"
                   : "text-outline hover:text-on-surface-variant"
               )}
             >
-              <Icon size={20} strokeWidth={active ? 2.5 : 1.75} />
+              <Icon size={20} strokeWidth={active || orange ? 2.5 : 1.75} />
               <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
             </Link>
           );
