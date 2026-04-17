@@ -41,39 +41,12 @@ export default function ChatBot() {
         body: JSON.stringify({ messages: next }),
       });
 
-      if (!res.ok || !res.body) throw new Error("Geen response");
+      if (!res.ok) throw new Error("Geen response");
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let assistantText = "";
+      const data = await res.json();
+      const reply = data.reply ?? "Er ging iets mis.";
 
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
-
-        for (const line of lines) {
-          const data = line.slice(6).trim();
-          if (data === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(data);
-            const delta = parsed.choices?.[0]?.delta?.content ?? "";
-            assistantText += delta;
-            setMessages((prev) => {
-              const updated = [...prev];
-              updated[updated.length - 1] = {
-                role: "assistant",
-                content: assistantText,
-              };
-              return updated;
-            });
-          } catch {}
-        }
-      }
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
       setMessages((prev) => [
         ...prev,
