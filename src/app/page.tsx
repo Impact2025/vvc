@@ -15,7 +15,6 @@ import DonationThermometer from "@/components/home/DonationThermometer";
 import QuickLinks from "@/components/home/QuickLinks";
 import ActivityFeed, { type Activity } from "@/components/home/ActivityFeed";
 import Countdown from "@/components/home/Countdown";
-import ParentWelcome from "@/components/home/ParentWelcome";
 import ChatBot from "@/components/home/ChatBot";
 import LiveLocationBanner from "@/components/home/LiveLocationBanner";
 import type { Match } from "@/db/schema";
@@ -162,9 +161,6 @@ export default async function HomePage() {
 
         {/* Live locatie banner (alleen zichtbaar als GPS actief) */}
         <LiveLocationBanner />
-
-        {/* Ouder welkom / inlog */}
-        <ParentWelcome />
 
         {/* Live / Next Match */}
         <LiveScore match={currentMatch} />

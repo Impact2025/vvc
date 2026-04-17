@@ -105,11 +105,10 @@ export default function Header({ activePage }: HeaderProps) {
             </div>
           ) : (
             <Link
-              href="/admin"
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-xs font-bold"
-              aria-label="Admin"
+              href="/inloggen"
+              className="px-3 py-1.5 rounded-lg text-sm font-bold font-headline text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
             >
-              <span>A</span>
+              Inloggen
             </Link>
           )}
         </div>

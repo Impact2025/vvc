@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     const [newPhoto] = await db
       .insert(photos)
-      .values({ url, caption, uploader_name, uploader_parent_id, match_id, approved: false })
+      .values({ url, caption, uploader_name, uploader_parent_id, match_id, approved: !!uploader_parent_id })
       .returning();
 
     return NextResponse.json(newPhoto, { status: 201 });

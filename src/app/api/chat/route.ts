@@ -13,10 +13,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "API key ontbreekt" }, { status: 500 });
     }
 
-    const body = await req.json();
-    const { messages } = body;
+    const { messages } = await req.json();
 
-    // Fetch live context from DB (fail gracefully)
+    // Live context uit DB
     let contextBlock = "Livedata tijdelijk niet beschikbaar.";
     try {
       const [allMatches, allPlayers, settingsRows] = await Promise.all([
@@ -45,7 +44,6 @@ export async function POST(req: Request) {
         .map((p) => `${p.name}: ${p.goals ?? 0} goals, ${p.assists ?? 0} assists`);
 
       contextBlock = `
-## Live data VVC Goes UK
 Donatiedoel: €${(goal / 100).toFixed(0)} | Opgehaald: €${(raised / 100).toFixed(0)} (${Math.round((raised / goal) * 100)}%)
 
 Wedstrijden:
@@ -57,17 +55,13 @@ ${topScorers.join("\n")}`;
       console.error("[chat] DB error:", dbErr);
     }
 
-    const systemPrompt = `Je bent de vriendelijke assistent van VVC Goes UK — een reis waarbij het VVC U10 jeugdvoetbalteam (de "Little Lions") uit Nederland naar Londen gaat voor een internationaal toernooi in 2026.
+    const systemPrompt = `Je bent de vriendelijke assistent van VVC Goes UK — het VVC Onder 10 jeugdvoetbalteam dat naar Londen gaat voor een internationaal toernooi in 2026.
 
-Je helpt ouders en sponsoren met vragen over:
-- Wedstrijden, scores en speelschema
-- Donatiecampagne en sponsorpakketten
-- De reis (Londen, logistiek, datum)
-- De spelers en het team
-- Hoe de app werkt (foto's, live score, dagboek)
+Je helpt ouders en sponsoren met vragen over wedstrijden, scores, donaties, de reis naar Londen en hoe de app werkt. De spelers heten: Wesley, Emerson, Alex, Syb, Thomas, Sepp, Deniz, Kayne en Tyren.
 
-Antwoord altijd in het Nederlands. Wees warm, enthousiast en kort. Gebruik geen markdown, gewone tekst. Als je iets niet weet, zeg dat eerlijk.
+Antwoord altijd in het Nederlands. Wees warm, enthousiast en bondig. Geen markdown, gewone tekst. Als je iets niet weet, zeg dat eerlijk.
 
+Live data:
 ${contextBlock}`;
 
     const orResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
