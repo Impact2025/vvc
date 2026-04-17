@@ -15,8 +15,68 @@ interface Player {
   award: string | null;
 }
 
-const emptyForm = { name: "", number: "", position: "" };
+const emptyForm = () => ({ name: "", number: "", positions: [] as string[] });
 const positions = ["Keeper", "Verdediger", "Middenvelder", "Aanvaller"];
+
+const positionColors: Record<string, string> = {
+  Keeper: "bg-yellow-100 text-yellow-800",
+  Verdediger: "bg-blue-100 text-blue-800",
+  Middenvelder: "bg-green-100 text-green-800",
+  Aanvaller: "bg-red-100 text-red-800",
+};
+
+function PositionPicker({ player, onSave }: { player: Player; onSave: (id: number, pos: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = player.position ? player.position.split(", ").filter(Boolean) : [];
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  function toggle(pos: string) {
+    const next = selected.includes(pos) ? selected.filter((p) => p !== pos) : [...selected, pos];
+    onSave(player.id, next.join(", "));
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex flex-wrap gap-1 items-center min-w-[80px] text-left"
+      >
+        {selected.length === 0 ? (
+          <span className="text-xs text-outline italic">Kies…</span>
+        ) : (
+          selected.map((p) => (
+            <span key={p} className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${positionColors[p] ?? "bg-surface-container text-on-surface"}`}>
+              {p}
+            </span>
+          ))
+        )}
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 z-20 bg-white rounded-xl shadow-lg border border-outline-variant/20 p-2 min-w-[150px]">
+          {positions.map((pos) => (
+            <label key={pos} className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-surface-container-low cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selected.includes(pos)}
+                onChange={() => toggle(pos)}
+                className="accent-orange-500"
+              />
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${positionColors[pos]}`}>{pos}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 const awards = [
   "🔥 Beste Inzet",
   "🤝 Fair Play",
@@ -32,7 +92,7 @@ export default function SpelersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
   const [uploadingPhotoId, setUploadingPhotoId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,14 +125,14 @@ export default function SpelersPage() {
         body: JSON.stringify({
           name: form.name,
           number: form.number ? parseInt(form.number) : null,
-          position: form.position || null,
+          position: form.positions.length > 0 ? form.positions.join(", ") : null,
           goals: 0,
           assists: 0,
         }),
       });
       if (!res.ok) throw new Error();
       toast.success("Speler toegevoegd");
-      setForm(emptyForm);
+      setForm(emptyForm());
       setShowForm(false);
       fetchPlayers();
     } catch {
@@ -95,6 +155,20 @@ export default function SpelersPage() {
       setPlayers((prev) =>
         prev.map((p) => (p.id === player.id ? { ...p, [field]: newVal } : p))
       );
+    } catch {
+      toast.error("Opslaan mislukt");
+    }
+  };
+
+  const handlePositionChange = async (id: number, position: string) => {
+    try {
+      const res = await fetch(`/api/players/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ position: position || null }),
+      });
+      if (!res.ok) throw new Error();
+      setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, position: position || null } : p)));
     } catch {
       toast.error("Opslaan mislukt");
     }
@@ -185,14 +259,26 @@ export default function SpelersPage() {
               <input type="number" min="1" max="99" value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} className="w-full border border-outline-variant/30 rounded-lg px-4 py-2.5 text-sm focus:border-primary-container focus:ring-0 bg-white" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Positie</label>
-              <select value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} className="w-full border border-outline-variant/30 rounded-lg px-4 py-2.5 text-sm focus:border-primary-container focus:ring-0 bg-white">
-                <option value="">Kies positie</option>
-                {positions.map((p) => <option key={p} value={p}>{p}</option>)}
-              </select>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Positie(s)</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {positions.map((pos) => (
+                  <label key={pos} className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.positions.includes(pos)}
+                      onChange={() => setForm((f) => ({
+                        ...f,
+                        positions: f.positions.includes(pos) ? f.positions.filter((p) => p !== pos) : [...f.positions, pos],
+                      }))}
+                      className="accent-orange-500"
+                    />
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${positionColors[pos]}`}>{pos}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="sm:col-span-3 flex justify-end gap-3">
-              <button type="button" onClick={() => { setShowForm(false); setForm(emptyForm); }} className="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-sm font-semibold text-on-surface-variant">Annuleren</button>
+              <button type="button" onClick={() => { setShowForm(false); setForm(emptyForm()); }} className="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-sm font-semibold text-on-surface-variant">Annuleren</button>
               <button type="submit" disabled={saving} className="bg-primary-container text-white px-5 py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50">
                 {saving ? "Opslaan..." : "Toevoegen"}
               </button>
@@ -256,7 +342,9 @@ export default function SpelersPage() {
                         <span className="font-medium text-on-surface">{player.name}</span>
                       </div>
                     </td>
-                    <td className="py-3 pr-4 text-on-surface-variant text-xs">{player.position ?? "—"}</td>
+                    <td className="py-3 pr-4">
+                      <PositionPicker player={player} onSave={handlePositionChange} />
+                    </td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center justify-center gap-2">
                         <button onClick={() => handleStatChange(player, "goals", -1)} className="w-6 h-6 rounded border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container text-sm leading-none flex items-center justify-center font-bold">−</button>
