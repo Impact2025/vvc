@@ -34,12 +34,12 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-on-surface">
         {children}
-        <footer className="fixed bottom-16 left-0 right-0 z-40 flex justify-center pointer-events-none md:bottom-0 md:pb-2">
+        <footer className="fixed bottom-20 left-0 right-0 z-40 flex justify-center pointer-events-none md:bottom-0 md:pb-2">
           <a
             href="https://weareimpact.nl/"
             target="_blank"
             rel="noopener noreferrer"
-            className="pointer-events-auto text-[10px] text-on-surface-variant/40 hover:text-on-surface-variant/70 transition-colors tracking-wide"
+            className="pointer-events-none md:pointer-events-auto text-[10px] text-on-surface-variant/40 hover:text-on-surface-variant/70 transition-colors tracking-wide"
           >
             Innovatie met een sociaal hart · WeAreImpact
           </a>
