@@ -63,7 +63,7 @@ ${contextBlock}`;
         "X-Title": "VVC Goes UK",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-3.5-haiku-20241022",
+        model: "anthropic/claude-3.5-haiku",
         stream: false,
         max_tokens: 400,
         messages: [
