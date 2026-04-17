@@ -169,6 +169,7 @@ export default function SpelersPage() {
       });
       if (!res.ok) throw new Error();
       setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, position: position || null } : p)));
+      toast.success("Positie opgeslagen");
     } catch {
       toast.error("Opslaan mislukt");
     }
