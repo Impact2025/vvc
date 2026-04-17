@@ -107,7 +107,7 @@ export default function PhotoGrid({ photos, matchTitle }: PhotoGridProps) {
               priority
             />
             {/* Dark vignette overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50" />
           </div>
 
           {/* Top bar */}
@@ -142,14 +142,14 @@ export default function PhotoGrid({ photos, matchTitle }: PhotoGridProps) {
 
           {/* Caption overlay — bottom */}
           {(current.caption || current.uploader_name) && (
-            <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 pt-16 z-10">
+            <div className="absolute bottom-0 left-0 right-0 px-6 pb-24 pt-16 z-10">
               {current.caption && (
-                <p className="text-white font-bold text-lg leading-snug drop-shadow-lg max-w-lg">
+                <p className="text-white font-black text-xl leading-snug max-w-lg [text-shadow:0_2px_12px_rgba(0,0,0,0.9)]">
                   {current.caption}
                 </p>
               )}
               {current.uploader_name && (
-                <p className="text-white/60 text-sm mt-1.5 font-medium">
+                <p className="text-white/70 text-sm mt-2 font-semibold [text-shadow:0_1px_6px_rgba(0,0,0,0.8)]">
                   📸 {current.uploader_name}
                 </p>
               )}
