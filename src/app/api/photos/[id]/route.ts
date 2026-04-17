@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { photos } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { del } from "@vercel/blob";
 
 interface RouteContext {
   params: { id: string };
@@ -42,6 +43,10 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
 
     if (!deleted) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+    }
+
+    if (deleted.url?.includes("blob.vercel-storage.com")) {
+      await del(deleted.url).catch(console.error);
     }
 
     return NextResponse.json({ success: true });

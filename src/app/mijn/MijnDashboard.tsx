@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Camera, BookOpen, LogOut, CheckCircle, X,
-  Upload, Clock, Image as ImageIcon, ChevronRight,
+  Upload, Clock, Image as ImageIcon, ChevronRight, Trash2,
 } from "lucide-react";
 import type { ParentSession } from "@/lib/parentSession";
 
@@ -187,6 +187,15 @@ function FotosTab({
   onUploaded: () => void;
 }) {
   const [showUpload, setShowUpload] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  async function handleDelete(id: number) {
+    if (!confirm("Foto verwijderen?")) return;
+    setDeletingId(id);
+    await fetch(`/api/photos/${id}`, { method: "DELETE" });
+    setDeletingId(null);
+    onUploaded();
+  }
 
   return (
     <div>
@@ -211,7 +220,7 @@ function FotosTab({
           {photos.map((p) => (
             <div key={p.id} className="relative rounded-2xl overflow-hidden aspect-square bg-surface-container">
               <Image src={p.url} alt={p.caption ?? "foto"} fill className="object-cover" />
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 right-2 flex items-center gap-1">
                 {p.approved ? (
                   <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                     <CheckCircle size={10} /> Goedgekeurd
@@ -222,8 +231,16 @@ function FotosTab({
                   </span>
                 )}
               </div>
+              <button
+                onClick={() => handleDelete(p.id)}
+                disabled={deletingId === p.id}
+                className="absolute bottom-2 right-2 w-7 h-7 bg-black/60 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors disabled:opacity-50"
+                title="Verwijderen"
+              >
+                <Trash2 size={13} className="text-white" />
+              </button>
               {p.caption && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <div className="absolute bottom-0 left-0 right-10 bg-gradient-to-t from-black/70 to-transparent p-2">
                   <p className="text-white text-xs line-clamp-1">{p.caption}</p>
                 </div>
               )}
