@@ -63,7 +63,7 @@ ${contextBlock}`;
         "X-Title": "VVC Goes UK",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-3.5-haiku",
+        model: "anthropic/claude-3.5-haiku-20241022",
         stream: false,
         max_tokens: 400,
         messages: [
@@ -76,7 +76,7 @@ ${contextBlock}`;
     if (!orResponse.ok) {
       const errText = await orResponse.text();
       console.error("[chat] OpenRouter error:", orResponse.status, errText);
-      return NextResponse.json({ error: "AI tijdelijk niet beschikbaar" }, { status: 502 });
+      return NextResponse.json({ error: `OpenRouter ${orResponse.status}: ${errText}` }, { status: 502 });
     }
 
     const data = await orResponse.json();
