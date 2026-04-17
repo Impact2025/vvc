@@ -95,57 +95,63 @@ export default function PhotoGrid({ photos, matchTitle }: PhotoGridProps) {
 
       {/* Lightbox */}
       {lightbox.open && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col animate-fade-in">
+        <div className="fixed inset-0 z-50 animate-fade-in">
+          {/* Fullscreen image as background */}
+          <div className="absolute inset-0">
+            <Image
+              src={current.url}
+              alt={current.caption ?? "VVC foto"}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority
+            />
+            {/* Dark vignette overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/50" />
+          </div>
+
           {/* Top bar */}
-          <div className="flex items-center justify-between px-6 py-4">
-            <p className="text-white/60 text-sm font-medium">
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 py-4 z-10">
+            <p className="text-white/60 text-sm font-semibold tabular-nums">
               {lightbox.index + 1} / {photos.length}
             </p>
             <button
               onClick={closeLightbox}
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
               aria-label="Sluiten"
             >
               <X size={20} />
             </button>
           </div>
 
-          {/* Image */}
-          <div className="flex-1 relative flex items-center justify-center px-16">
-            <button
-              onClick={prev}
-              className="absolute left-4 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-              aria-label="Vorige"
-            >
-              <ChevronLeft size={20} />
-            </button>
+          {/* Prev / Next */}
+          <button
+            onClick={prev}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors z-10"
+            aria-label="Vorige"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors z-10"
+            aria-label="Volgende"
+          >
+            <ChevronRight size={22} />
+          </button>
 
-            <div className="relative w-full h-full max-w-4xl">
-              <Image
-                src={current.url}
-                alt={current.caption ?? "VVC foto"}
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, 80vw"
-                priority
-              />
-            </div>
-
-            <button
-              onClick={next}
-              className="absolute right-4 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-              aria-label="Volgende"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
-          {/* Caption */}
-          {current.caption && (
-            <div className="px-6 py-4 text-center">
-              <p className="text-white/80 text-sm">{current.caption}</p>
+          {/* Caption overlay — bottom */}
+          {(current.caption || current.uploader_name) && (
+            <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 pt-16 z-10">
+              {current.caption && (
+                <p className="text-white font-bold text-lg leading-snug drop-shadow-lg max-w-lg">
+                  {current.caption}
+                </p>
+              )}
               {current.uploader_name && (
-                <p className="text-white/40 text-xs mt-1">Door {current.uploader_name}</p>
+                <p className="text-white/60 text-sm mt-1.5 font-medium">
+                  📸 {current.uploader_name}
+                </p>
               )}
             </div>
           )}
