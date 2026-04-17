@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/db";
 import { players, diary_entries } from "@/db/schema";
 import { asc, desc } from "drizzle-orm";
@@ -15,6 +16,7 @@ interface DiaryWithPlayer extends DiaryEntry {
 }
 
 async function getData() {
+  noStore();
   try {
     const allPlayers = await db.select().from(players).orderBy(desc(players.goals));
     const allEntries = await db
