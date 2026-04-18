@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Upload, X, CheckCircle } from "lucide-react";
 
 interface Props {
@@ -18,8 +18,6 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
   const [caption, setCaption] = useState("");
   const [matchId, setMatchId] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleFile = (f: File) => {
     setFile(f);
     setPreview(URL.createObjectURL(f));
@@ -97,9 +95,9 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
                 </div>
               ) : (
                 <>
-                  {/* Drop zone */}
-                  <div
-                    onClick={() => inputRef.current?.click()}
+                  {/* Drop zone — label triggert input direct (betrouwbaarder op Android PWA) */}
+                  <label
+                    htmlFor="foto-file-input"
                     className="border-2 border-dashed border-outline-variant/40 rounded-xl aspect-video flex flex-col items-center justify-center cursor-pointer hover:border-primary-container/60 hover:bg-primary-fixed/10 transition-colors mb-4 overflow-hidden relative"
                   >
                     {preview ? (
@@ -117,9 +115,9 @@ export default function FotoUpload({ parentId, parentNaam, matches }: Props) {
                         <p className="text-xs text-outline mt-1">JPG, PNG of HEIC</p>
                       </>
                     )}
-                  </div>
+                  </label>
                   <input
-                    ref={inputRef}
+                    id="foto-file-input"
                     type="file"
                     accept="image/*"
                     className="hidden"
