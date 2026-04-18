@@ -38,37 +38,57 @@ const eventStyles: Record<EventType, string> = {
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected";
 
-function playGoalSound() {
-  try {
-    const ctx = new AudioContext();
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = "sine";
-      const t = ctx.currentTime + i * 0.13;
-      gain.gain.setValueAtTime(0.35, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      osc.start(t);
-      osc.stop(t + 0.25);
-    });
-  } catch {
-    // AudioContext not available
-  }
-}
-
-function triggerGoalFeedback() {
-  navigator.vibrate?.([300, 100, 300, 100, 600]);
-  playGoalSound();
-}
-
 export default function LivePage() {
   const [events, setEvents] = useState<LiveEvent[]>([]);
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  // Unlock AudioContext on first user gesture (browser autoplay policy)
+  useEffect(() => {
+    const unlock = () => {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContext();
+      }
+      audioCtxRef.current.resume();
+    };
+    window.addEventListener("touchstart", unlock, { once: true });
+    window.addEventListener("click", unlock, { once: true });
+    return () => {
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("click", unlock);
+    };
+  }, []);
+
+  const playGoalSound = () => {
+    try {
+      const ctx = audioCtxRef.current ?? new AudioContext();
+      audioCtxRef.current = ctx;
+      ctx.resume().then(() => {
+        const notes = [523, 659, 784, 1047];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.value = freq;
+          osc.type = "sine";
+          const t = ctx.currentTime + i * 0.13;
+          gain.gain.setValueAtTime(0.35, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc.start(t);
+          osc.stop(t + 0.25);
+        });
+      });
+    } catch {
+      // AudioContext not available
+    }
+  };
+
+  const triggerGoalFeedback = () => {
+    navigator.vibrate?.([300, 100, 300, 100, 600]);
+    playGoalSound();
+  };
 
   useEffect(() => {
     const pusher = getPusherClient();
