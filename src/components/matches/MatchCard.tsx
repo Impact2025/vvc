@@ -5,7 +5,7 @@ import type { Match } from "@/db/schema";
 
 interface MatchCardProps {
   match: Match;
-  variant?: "result" | "upcoming" | "highlight";
+  variant?: "result" | "upcoming" | "highlight" | "live";
 }
 
 function getResultBadge(homeScore: number, awayScore: number) {
@@ -54,6 +54,57 @@ export default function MatchCard({ match, variant = "upcoming" }: MatchCardProp
 
         {match.location && (
           <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">
+            <MapPin size={12} />
+            {match.location}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Live card ────────────────────────────────────────────────────────────
+  if (variant === "live") {
+    return (
+      <div className="card p-6 border-l-4 border-l-green-500 bg-green-50/20">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
+            <p className="section-label text-green-600">Live Nu</p>
+          </div>
+          <Badge variant="live" />
+        </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary font-label mb-1">VVC</p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-secondary/10 flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-secondary">V</span>
+            </div>
+          </div>
+
+          <div className="text-center px-2">
+            <div className="flex items-center gap-2">
+              <span className="text-5xl font-black font-headline text-on-surface tabular-nums">{homeScore}</span>
+              <span className="text-2xl text-outline font-bold">–</span>
+              <span className="text-5xl font-black font-headline text-on-surface-variant tabular-nums">{awayScore}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant mt-1">{formatDate(match.date)}</p>
+          </div>
+
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label mb-1 truncate">
+              {match.opponent}
+            </p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-surface-container flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-on-surface-variant">
+                {match.opponent.charAt(0)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {match.location && (
+          <div className="flex items-center justify-center gap-1.5 mt-4 pt-4 border-t border-outline-variant/10 text-xs text-on-surface-variant">
             <MapPin size={12} />
             {match.location}
           </div>

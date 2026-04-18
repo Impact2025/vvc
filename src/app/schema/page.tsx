@@ -36,9 +36,10 @@ function getStats(played: Match[]) {
 export default async function SchemaPage() {
   const allMatches = await getData();
 
+  const liveMatches = allMatches.filter((m) => m.status === "live");
   const upcoming = allMatches.filter((m) => m.status === "upcoming");
-  const played = allMatches.filter((m) => m.status === "finished" || m.status === "live");
-  const nextMatch = upcoming[0] ?? null;
+  const played = allMatches.filter((m) => m.status === "finished");
+  const featuredMatch = liveMatches[0] ?? upcoming[0] ?? null;
   const stats = getStats(played);
 
   return (
@@ -52,7 +53,7 @@ export default async function SchemaPage() {
             London Tour <span className="text-primary-container">Schema</span>
           </h1>
           <p className="text-sm text-on-surface-variant mt-1">
-            {allMatches.length} wedstrijd{allMatches.length !== 1 ? "en" : ""} · {played.length} gespeeld · {upcoming.length} aankomend
+            {allMatches.length} wedstrijd{allMatches.length !== 1 ? "en" : ""} · {played.length} gespeeld · {upcoming.length + liveMatches.length} aankomend{liveMatches.length > 0 ? ` · ${liveMatches.length} live` : ""}
           </p>
         </div>
 
@@ -74,15 +75,18 @@ export default async function SchemaPage() {
           </div>
         )}
 
-        {/* Next match highlight */}
-        {nextMatch && (
+        {/* Featured match — live or next upcoming */}
+        {featuredMatch && (
           <div className="mb-8">
-            <MatchCard match={nextMatch} variant="highlight" />
+            <MatchCard
+              match={featuredMatch}
+              variant={featuredMatch.status === "live" ? "live" : "highlight"}
+            />
           </div>
         )}
 
         {/* Filtered match list */}
-        <MatchFilter upcoming={upcoming} played={played} />
+        <MatchFilter live={liveMatches} upcoming={upcoming} played={played} />
       </main>
       <BottomNav />
     </>

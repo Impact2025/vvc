@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 type Filter = "alle" | "upcoming" | "gespeeld";
 
 interface MatchFilterProps {
+  live: Match[];
   upcoming: Match[];
   played: Match[];
 }
@@ -18,7 +19,7 @@ const filters: { key: Filter; label: string }[] = [
   { key: "gespeeld", label: "Gespeeld" },
 ];
 
-export default function MatchFilter({ upcoming, played }: MatchFilterProps) {
+export default function MatchFilter({ live, upcoming, played }: MatchFilterProps) {
   const [active, setActive] = useState<Filter>("alle");
 
   const showUpcoming = active === "alle" || active === "upcoming";
@@ -43,6 +44,18 @@ export default function MatchFilter({ upcoming, played }: MatchFilterProps) {
           </button>
         ))}
       </div>
+
+      {/* Live matches */}
+      {showUpcoming && live.length > 0 && (
+        <div className="mb-8">
+          <p className="section-label mb-4 text-green-600">Nu Live</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {live.map((m) => (
+              <MatchCard key={m.id} match={m} variant="live" />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Upcoming matches */}
       {showUpcoming && upcoming.length > 0 && (
@@ -69,9 +82,9 @@ export default function MatchFilter({ upcoming, played }: MatchFilterProps) {
       )}
 
       {/* Empty state */}
-      {((active === "upcoming" && upcoming.length === 0) ||
+      {((active === "upcoming" && live.length === 0 && upcoming.length === 0) ||
         (active === "gespeeld" && played.length === 0) ||
-        (active === "alle" && upcoming.length === 0 && played.length === 0)) && (
+        (active === "alle" && live.length === 0 && upcoming.length === 0 && played.length === 0)) && (
         <div className="card p-10 text-center">
           <p className="font-headline font-bold text-on-surface">
             Geen wedstrijden gevonden
