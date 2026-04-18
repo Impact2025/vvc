@@ -24,6 +24,9 @@ export default function MatchCard({ match, variant = "upcoming" }: MatchCardProp
   const homeScore = match.home_score ?? 0;
   const awayScore = match.away_score ?? 0;
   const result = getResultBadge(homeScore, awayScore);
+  const scorers: string[] = (() => {
+    try { return JSON.parse(match.home_scorers ?? "[]"); } catch { return []; }
+  })();
 
   // ── Result card ──────────────────────────────────────────────────────────
   if (variant === "result") {
@@ -42,7 +45,7 @@ export default function MatchCard({ match, variant = "upcoming" }: MatchCardProp
         </div>
 
         {/* Score */}
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-2">
           <span className="text-4xl font-black font-headline text-on-surface tabular-nums">
             {homeScore}
           </span>
@@ -51,6 +54,12 @@ export default function MatchCard({ match, variant = "upcoming" }: MatchCardProp
             {awayScore}
           </span>
         </div>
+
+        {scorers.length > 0 && (
+          <p className="text-xs text-on-surface-variant mb-3">
+            ⚽ {scorers.join(", ")}
+          </p>
+        )}
 
         {match.location && (
           <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">
@@ -103,10 +112,19 @@ export default function MatchCard({ match, variant = "upcoming" }: MatchCardProp
           </div>
         </div>
 
-        {match.location && (
-          <div className="flex items-center justify-center gap-1.5 mt-4 pt-4 border-t border-outline-variant/10 text-xs text-on-surface-variant">
-            <MapPin size={12} />
-            {match.location}
+        {(scorers.length > 0 || match.location) && (
+          <div className="mt-4 pt-4 border-t border-outline-variant/10 space-y-1">
+            {scorers.length > 0 && (
+              <p className="text-xs text-center text-on-surface-variant">
+                ⚽ {scorers.join(", ")}
+              </p>
+            )}
+            {match.location && (
+              <div className="flex items-center justify-center gap-1.5 text-xs text-on-surface-variant">
+                <MapPin size={12} />
+                {match.location}
+              </div>
+            )}
           </div>
         )}
       </div>

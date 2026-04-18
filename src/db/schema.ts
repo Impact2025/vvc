@@ -20,6 +20,7 @@ export const matches = pgTable("matches", {
   home_score: integer("home_score").default(0),
   away_score: integer("away_score").default(0),
   status: varchar("status", { length: 20 }).default("upcoming"), // upcoming | live | finished
+  home_scorers: text("home_scorers").default("[]"), // JSON array of scorer names
   created_at: timestamp("created_at").defaultNow(),
 });
 

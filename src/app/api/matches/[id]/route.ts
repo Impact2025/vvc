@@ -31,6 +31,11 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     const body = await req.json();
     const { opponent, date, time, location, home_score, away_score, status, scorer_name } = body;
 
+    const [current] = await db.select().from(matches).where(eq(matches.id, id));
+    if (!current) {
+      return NextResponse.json({ error: "Match not found" }, { status: 404 });
+    }
+
     const updateData: Partial<typeof matches.$inferInsert> = {};
     if (opponent !== undefined) updateData.opponent = opponent;
     if (date !== undefined) updateData.date = date;
@@ -39,6 +44,16 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     if (home_score !== undefined) updateData.home_score = home_score;
     if (away_score !== undefined) updateData.away_score = away_score;
     if (status !== undefined) updateData.status = status;
+
+    if (
+      home_score !== undefined &&
+      home_score > (current.home_score ?? 0) &&
+      scorer_name
+    ) {
+      const scorers: string[] = JSON.parse(current.home_scorers ?? "[]");
+      scorers.push(scorer_name);
+      updateData.home_scorers = JSON.stringify(scorers);
+    }
 
     const [updated] = await db
       .update(matches)

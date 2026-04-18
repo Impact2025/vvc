@@ -86,7 +86,7 @@ export default async function SchemaPage() {
         )}
 
         {/* Filtered match list */}
-        <MatchFilter live={liveMatches} upcoming={upcoming} played={played} />
+        <MatchFilter upcoming={upcoming} played={played} />
       </main>
       <BottomNav />
     </>
