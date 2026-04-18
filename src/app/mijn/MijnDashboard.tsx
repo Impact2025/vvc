@@ -477,6 +477,8 @@ interface MatchFull {
   status: string;
 }
 
+interface MijnPlayer { id: number; name: string; number: number | null; }
+
 type ScoreUpdate = Partial<Pick<MatchFull, "home_score" | "away_score" | "status">>;
 
 const SCORE_STATUS = [
@@ -491,76 +493,125 @@ function isMatchToday(dateStr: string) {
   return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
 }
 
-function ScoreMatchCard({ match, saving, onUpdate }: { match: MatchFull; saving: boolean; onUpdate: (d: ScoreUpdate) => void }) {
-  const opponentShort = match.opponent.split(" ").slice(0, 2).join(" ");
+function MijnScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
+  match: MatchFull; newScore: number; players: MijnPlayer[];
+  onConfirm: (scorer: string | null) => void; onCancel: () => void;
+}) {
   return (
-    <div className={`bg-white border-2 rounded-2xl shadow-sm overflow-hidden transition-opacity ${match.status === "live" ? "border-green-400" : "border-outline-variant/15"} ${saving ? "opacity-60" : ""}`}>
-      <div className="px-5 pt-4 pb-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-on-surface-variant">{match.time ?? ""}  {match.location ? `· ${match.location}` : ""}</span>
-          {saving && <span className="text-xs text-primary-container font-semibold">Opslaan…</span>}
-        </div>
-        <p className="font-black text-on-surface mt-0.5">VVC <span className="font-normal text-on-surface-variant">vs</span> {match.opponent}</p>
-      </div>
-
-      {/* Status */}
-      <div className="px-5 py-3 flex gap-2">
-        {SCORE_STATUS.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => match.status !== opt.value && onUpdate({ status: opt.value })}
-            disabled={saving}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${match.status === opt.value ? opt.active : "text-on-surface-variant border-outline-variant/15"}`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Score knoppen */}
-      <div className="px-5 pb-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <div>
-          <p className="text-xs font-bold text-on-surface-variant text-center mb-2">VVC</p>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onUpdate({ home_score: Math.max(0, match.home_score - 1) })}
-              disabled={saving || match.home_score === 0}
-              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
-            >−</button>
-            <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.home_score}</span>
-            <button
-              onClick={() => onUpdate({ home_score: match.home_score + 1 })}
-              disabled={saving}
-              className="w-12 h-12 rounded-xl bg-primary-container text-xl font-bold text-white active:opacity-80 flex items-center justify-center shadow-sm"
-            >+</button>
+    <div className="fixed inset-0 z-50 flex items-end">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+      <div className="relative bg-white w-full rounded-t-2xl px-5 pt-5 pb-8 max-h-[80vh] overflow-y-auto shadow-xl">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary-container mb-0.5">Doelpunt VVC!</p>
+            <p className="font-black text-on-surface text-lg">
+              {newScore} – {match.away_score}
+              <span className="text-sm font-normal text-on-surface-variant ml-2">vs {match.opponent}</span>
+            </p>
           </div>
+          <button onClick={onCancel} className="text-on-surface-variant text-xl p-1">✕</button>
         </div>
-
-        <span className="text-3xl font-black text-outline-variant mt-4">–</span>
-
-        <div>
-          <p className="text-xs font-bold text-on-surface-variant text-center mb-2">{opponentShort}</p>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onUpdate({ away_score: Math.max(0, match.away_score - 1) })}
-              disabled={saving || match.away_score === 0}
-              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
-            >−</button>
-            <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.away_score}</span>
-            <button
-              onClick={() => onUpdate({ away_score: match.away_score + 1 })}
-              disabled={saving}
-              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high flex items-center justify-center"
-            >+</button>
-          </div>
+        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">Wie scoorde?</p>
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          {players.map((p) => (
+            <button key={p.id} onClick={() => onConfirm(p.name)}
+              className="flex items-center gap-3 p-3 rounded-xl border border-outline-variant/15 bg-surface-container-low active:bg-primary-container/10 active:border-primary-container/30 transition-colors text-left"
+            >
+              <span className="w-9 h-9 rounded-xl bg-primary-container text-white text-sm font-black flex items-center justify-center flex-shrink-0">
+                {p.number ?? "?"}
+              </span>
+              <span className="font-bold text-on-surface text-sm">{p.name}</span>
+            </button>
+          ))}
         </div>
+        <button onClick={() => onConfirm(null)}
+          className="w-full py-3 rounded-xl border border-outline-variant/20 text-sm font-semibold text-on-surface-variant"
+        >
+          Onbekend / Overslaan
+        </button>
       </div>
     </div>
   );
 }
 
+function ScoreMatchCard({ match, saving, players, onUpdate }: {
+  match: MatchFull; saving: boolean; players: MijnPlayer[];
+  onUpdate: (d: ScoreUpdate, scorer?: string) => void;
+}) {
+  const [pendingGoal, setPendingGoal] = useState<number | null>(null);
+  const opponentShort = match.opponent.split(" ").slice(0, 2).join(" ");
+
+  const confirmGoal = (scorer: string | null) => {
+    if (pendingGoal === null) return;
+    onUpdate({ home_score: pendingGoal }, scorer ?? undefined);
+    setPendingGoal(null);
+  };
+
+  return (
+    <>
+      <div className={`bg-white border-2 rounded-2xl shadow-sm overflow-hidden transition-opacity ${match.status === "live" ? "border-green-400" : "border-outline-variant/15"} ${saving ? "opacity-60" : ""}`}>
+        <div className="px-5 pt-4 pb-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-on-surface-variant">{match.time ?? ""}  {match.location ? `· ${match.location}` : ""}</span>
+            {saving && <span className="text-xs text-primary-container font-semibold">Opslaan…</span>}
+          </div>
+          <p className="font-black text-on-surface mt-0.5">VVC <span className="font-normal text-on-surface-variant">vs</span> {match.opponent}</p>
+        </div>
+
+        <div className="px-5 py-3 flex gap-2">
+          {SCORE_STATUS.map((opt) => (
+            <button key={opt.value}
+              onClick={() => match.status !== opt.value && onUpdate({ status: opt.value })}
+              disabled={saving}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${match.status === opt.value ? opt.active : "text-on-surface-variant border-outline-variant/15"}`}
+            >{opt.label}</button>
+          ))}
+        </div>
+
+        <div className="px-5 pb-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div>
+            <p className="text-xs font-bold text-on-surface-variant text-center mb-2">VVC</p>
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => onUpdate({ home_score: Math.max(0, match.home_score - 1) })}
+                disabled={saving || match.home_score === 0}
+                className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
+              >−</button>
+              <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.home_score}</span>
+              <button onClick={() => setPendingGoal(match.home_score + 1)}
+                disabled={saving}
+                className="w-12 h-12 rounded-xl bg-primary-container text-xl font-bold text-white active:opacity-80 flex items-center justify-center shadow-sm"
+              >+</button>
+            </div>
+          </div>
+          <span className="text-3xl font-black text-outline-variant mt-4">–</span>
+          <div>
+            <p className="text-xs font-bold text-on-surface-variant text-center mb-2">{opponentShort}</p>
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => onUpdate({ away_score: Math.max(0, match.away_score - 1) })}
+                disabled={saving || match.away_score === 0}
+                className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
+              >−</button>
+              <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.away_score}</span>
+              <button onClick={() => onUpdate({ away_score: match.away_score + 1 })}
+                disabled={saving}
+                className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high flex items-center justify-center"
+              >+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {pendingGoal !== null && (
+        <MijnScorerPicker match={match} newScore={pendingGoal} players={players}
+          onConfirm={confirmGoal} onCancel={() => setPendingGoal(null)} />
+      )}
+    </>
+  );
+}
+
 function ScoresTab() {
   const [matches, setMatches] = useState<MatchFull[]>([]);
+  const [players, setPlayers] = useState<MijnPlayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<number | null>(null);
 
@@ -580,19 +631,22 @@ function ScoresTab() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchMatches(); }, [fetchMatches]);
+  useEffect(() => {
+    fetchMatches();
+    fetch("/api/players").then((r) => r.json()).then(setPlayers);
+  }, [fetchMatches]);
 
-  const update = useCallback(async (id: number, data: ScoreUpdate) => {
+  const update = useCallback(async (id: number, data: ScoreUpdate, scorer?: string) => {
     setSaving(id);
     setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, ...data } : m)));
     try {
       const res = await fetch(`/api/matches/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, ...(scorer ? { scorer_name: scorer } : {}) }),
       });
       if (!res.ok) throw new Error();
-      toast.success("Opgeslagen ✓", { duration: 1200 });
+      toast.success(scorer ? `⚽ ${scorer} scoort!` : "Opgeslagen ✓", { duration: 1800 });
     } catch {
       toast.error("Opslaan mislukt");
       fetchMatches();
@@ -620,7 +674,7 @@ function ScoresTab() {
           <p className="text-xs font-bold uppercase tracking-widest text-primary-container mb-3">Vandaag</p>
           <div className="space-y-4">
             {todayMatches.map((m) => (
-              <ScoreMatchCard key={m.id} match={m} saving={saving === m.id} onUpdate={(d) => update(m.id, d)} />
+              <ScoreMatchCard key={m.id} match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
             ))}
           </div>
         </section>
@@ -635,7 +689,7 @@ function ScoresTab() {
                 <p className="text-xs text-on-surface-variant mb-1.5 ml-1">
                   {new Date(m.date).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" })}
                 </p>
-                <ScoreMatchCard match={m} saving={saving === m.id} onUpdate={(d) => update(m.id, d)} />
+                <ScoreMatchCard match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
               </div>
             ))}
           </div>

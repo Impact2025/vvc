@@ -29,7 +29,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const id = parseInt(params.id);
     const body = await req.json();
-    const { opponent, date, time, location, home_score, away_score, status } = body;
+    const { opponent, date, time, location, home_score, away_score, status, scorer_name } = body;
 
     const updateData: Partial<typeof matches.$inferInsert> = {};
     if (opponent !== undefined) updateData.opponent = opponent;
@@ -57,6 +57,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
         homeScore: updated.home_score,
         awayScore: updated.away_score,
         status: updated.status,
+        scorer: scorer_name ?? null,
       });
     }
 
@@ -76,7 +77,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     } else if (home_score !== undefined || away_score !== undefined) {
       broadcastPush({
         title: "DOELPUNT! ⚽🎉",
-        body: `VVC ${updated.home_score}–${updated.away_score} ${updated.opponent}`,
+        body: scorer_name
+          ? `${scorer_name} scoort! VVC ${updated.home_score}–${updated.away_score} ${updated.opponent}`
+          : `VVC ${updated.home_score}–${updated.away_score} ${updated.opponent}`,
         url: "/live",
       });
     }
