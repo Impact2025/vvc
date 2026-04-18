@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vvcgoesuk-v1';
+const CACHE_NAME = 'vvcgoesuk-v2';
 const PRECACHE = ['/', '/fotos', '/kids', '/londen'];
 
 self.addEventListener('install', (event) => {
@@ -37,8 +37,8 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: '/logo.png',
-      badge: '/logo.png',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
       data: { url: data.url },
       vibrate: [200, 100, 200],
       requireInteraction: false,
