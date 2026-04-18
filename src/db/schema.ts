@@ -114,6 +114,7 @@ export const parents = pgTable("parents", {
   toestemming_app: boolean("toestemming_app").default(false),
   kan_fotos_uploaden: boolean("kan_fotos_uploaden").default(false),
   kan_commentaar: boolean("kan_commentaar").default(false),
+  kan_scores_bijhouden: boolean("kan_scores_bijhouden").default(false),
   goedgekeurd: boolean("goedgekeurd").default(false),
   invite_token: varchar("invite_token", { length: 255 }),
   token_expires_at: timestamp("token_expires_at"),

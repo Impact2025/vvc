@@ -11,6 +11,7 @@ export interface ParentSession {
   rol: string | null;
   kan_fotos_uploaden: boolean | null;
   kan_commentaar: boolean | null;
+  kan_scores_bijhouden: boolean | null;
 }
 
 export async function getParentSession(): Promise<ParentSession | null> {
@@ -28,6 +29,7 @@ export async function getParentSession(): Promise<ParentSession | null> {
         rol: parents.rol,
         kan_fotos_uploaden: parents.kan_fotos_uploaden,
         kan_commentaar: parents.kan_commentaar,
+        kan_scores_bijhouden: parents.kan_scores_bijhouden,
       })
       .from(parents)
       .where(eq(parents.id, parentId));

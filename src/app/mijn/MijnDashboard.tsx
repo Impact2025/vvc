@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Camera, BookOpen, LogOut, CheckCircle, X,
   Upload, Clock, Image as ImageIcon, ChevronRight, Trash2,
 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import type { ParentSession } from "@/lib/parentSession";
 
 interface Props {
@@ -28,7 +29,7 @@ function Initials({ naam }: { naam: string }) {
   return <>{init.toUpperCase()}</>;
 }
 
-type Tab = "home" | "fotos" | "dagboek";
+type Tab = "home" | "fotos" | "dagboek" | "scores";
 
 export default function MijnDashboard({ parent, matches }: Props) {
   const router = useRouter();
@@ -52,6 +53,7 @@ export default function MijnDashboard({ parent, matches }: Props) {
 
   return (
     <div className="pt-6">
+      <Toaster position="top-center" />
       {/* Profile hero */}
       <div className="bg-white border border-outline-variant/15 rounded-2xl p-6 shadow-sm mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -93,6 +95,7 @@ export default function MijnDashboard({ parent, matches }: Props) {
           { key: "home", label: "Dashboard", icon: "🏠" },
           { key: "fotos", label: "Mijn Foto's", icon: "📸" },
           { key: "dagboek", label: "Dagboek", icon: "📔" },
+          ...(parent.kan_scores_bijhouden ? [{ key: "scores", label: "Scores", icon: "⚽" }] : []),
         ] as { key: Tab; label: string; icon: string }[]).map(({ key, label, icon }) => (
           <button
             key={key}
@@ -109,6 +112,7 @@ export default function MijnDashboard({ parent, matches }: Props) {
       {tab === "home" && <HomeTab parent={parent} onNavigate={setTab} />}
       {tab === "fotos" && <FotosTab parent={parent} matches={matches} photos={myPhotos} onUploaded={() => setPhotosLoaded(false)} />}
       {tab === "dagboek" && <DagboekTab parent={parent} />}
+      {tab === "scores" && parent.kan_scores_bijhouden && <ScoresTab />}
     </div>
   );
 }
@@ -458,6 +462,190 @@ function DagboekTab({ parent }: { parent: ParentSession }) {
             {status === "saving" ? "Opslaan..." : "Entry opslaan"}
           </button>
         </form>
+      )}
+    </div>
+  );
+}
+
+/* ─── Scores Tab ────────────────────────────────────────────────────────────── */
+interface MatchFull {
+  id: number;
+  opponent: string;
+  date: string;
+  time: string | null;
+  location: string | null;
+  home_score: number;
+  away_score: number;
+  status: string;
+}
+
+type ScoreUpdate = Partial<Pick<MatchFull, "home_score" | "away_score" | "status">>;
+
+const SCORE_STATUS = [
+  { value: "upcoming", label: "Gepland", active: "bg-blue-100 text-blue-700 border-blue-200" },
+  { value: "live",     label: "● Live",  active: "bg-green-500 text-white border-green-500" },
+  { value: "finished", label: "Gespeeld", active: "bg-surface-container text-on-surface-variant border-outline-variant/20" },
+];
+
+function isMatchToday(dateStr: string) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+}
+
+function ScoreMatchCard({ match, saving, onUpdate }: { match: MatchFull; saving: boolean; onUpdate: (d: ScoreUpdate) => void }) {
+  const opponentShort = match.opponent.split(" ").slice(0, 2).join(" ");
+  return (
+    <div className={`bg-white border-2 rounded-2xl shadow-sm overflow-hidden transition-opacity ${match.status === "live" ? "border-green-400" : "border-outline-variant/15"} ${saving ? "opacity-60" : ""}`}>
+      <div className="px-5 pt-4 pb-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-on-surface-variant">{match.time ?? ""}  {match.location ? `· ${match.location}` : ""}</span>
+          {saving && <span className="text-xs text-primary-container font-semibold">Opslaan…</span>}
+        </div>
+        <p className="font-black text-on-surface mt-0.5">VVC <span className="font-normal text-on-surface-variant">vs</span> {match.opponent}</p>
+      </div>
+
+      {/* Status */}
+      <div className="px-5 py-3 flex gap-2">
+        {SCORE_STATUS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => match.status !== opt.value && onUpdate({ status: opt.value })}
+            disabled={saving}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${match.status === opt.value ? opt.active : "text-on-surface-variant border-outline-variant/15"}`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Score knoppen */}
+      <div className="px-5 pb-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div>
+          <p className="text-xs font-bold text-on-surface-variant text-center mb-2">VVC</p>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => onUpdate({ home_score: Math.max(0, match.home_score - 1) })}
+              disabled={saving || match.home_score === 0}
+              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
+            >−</button>
+            <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.home_score}</span>
+            <button
+              onClick={() => onUpdate({ home_score: match.home_score + 1 })}
+              disabled={saving}
+              className="w-12 h-12 rounded-xl bg-primary-container text-xl font-bold text-white active:opacity-80 flex items-center justify-center shadow-sm"
+            >+</button>
+          </div>
+        </div>
+
+        <span className="text-3xl font-black text-outline-variant mt-4">–</span>
+
+        <div>
+          <p className="text-xs font-bold text-on-surface-variant text-center mb-2">{opponentShort}</p>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => onUpdate({ away_score: Math.max(0, match.away_score - 1) })}
+              disabled={saving || match.away_score === 0}
+              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
+            >−</button>
+            <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.away_score}</span>
+            <button
+              onClick={() => onUpdate({ away_score: match.away_score + 1 })}
+              disabled={saving}
+              className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high flex items-center justify-center"
+            >+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoresTab() {
+  const [matches, setMatches] = useState<MatchFull[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<number | null>(null);
+
+  const fetchMatches = useCallback(async () => {
+    const res = await fetch("/api/matches");
+    const data: MatchFull[] = await res.json();
+    const order: Record<string, number> = { live: 0, upcoming: 1, finished: 2 };
+    data.sort((a, b) => {
+      const at = isMatchToday(a.date) ? 0 : 1;
+      const bt = isMatchToday(b.date) ? 0 : 1;
+      if (at !== bt) return at - bt;
+      const so = (order[a.status] ?? 3) - (order[b.status] ?? 3);
+      if (so !== 0) return so;
+      return (a.time ?? "").localeCompare(b.time ?? "");
+    });
+    setMatches(data);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchMatches(); }, [fetchMatches]);
+
+  const update = useCallback(async (id: number, data: ScoreUpdate) => {
+    setSaving(id);
+    setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, ...data } : m)));
+    try {
+      const res = await fetch(`/api/matches/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Opgeslagen ✓", { duration: 1200 });
+    } catch {
+      toast.error("Opslaan mislukt");
+      fetchMatches();
+    } finally {
+      setSaving(null);
+    }
+  }, [fetchMatches]);
+
+  const todayMatches = matches.filter((m) => isMatchToday(m.date));
+  const otherMatches = matches.filter((m) => !isMatchToday(m.date));
+
+  if (loading) return <p className="text-center text-on-surface-variant py-12 text-sm">Laden…</p>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-black font-headline text-on-surface">Score bijhouden</h2>
+          <p className="text-xs text-on-surface-variant mt-0.5">Wijzigingen gaan direct live <span className="text-green-600 font-bold">●</span></p>
+        </div>
+      </div>
+
+      {todayMatches.length > 0 && (
+        <section>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary-container mb-3">Vandaag</p>
+          <div className="space-y-4">
+            {todayMatches.map((m) => (
+              <ScoreMatchCard key={m.id} match={m} saving={saving === m.id} onUpdate={(d) => update(m.id, d)} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {otherMatches.length > 0 && (
+        <section>
+          <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3">Overige wedstrijden</p>
+          <div className="space-y-4">
+            {otherMatches.map((m) => (
+              <div key={m.id}>
+                <p className="text-xs text-on-surface-variant mb-1.5 ml-1">
+                  {new Date(m.date).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" })}
+                </p>
+                <ScoreMatchCard match={m} saving={saving === m.id} onUpdate={(d) => update(m.id, d)} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {matches.length === 0 && (
+        <p className="text-center text-on-surface-variant py-12 text-sm">Geen wedstrijden gevonden.</p>
       )}
     </div>
   );
