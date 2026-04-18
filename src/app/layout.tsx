@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import PushNotificationBanner from "@/components/PushNotificationBanner";
+import PWAInstallBanner from "@/components/PWAInstallBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,6 +45,7 @@ export default function RootLayout({
             Innovatie met een sociaal hart · WeAreImpact
           </a>
         </footer>
+        <PWAInstallBanner />
         <PushNotificationBanner />
         <Toaster
           position="top-center"
