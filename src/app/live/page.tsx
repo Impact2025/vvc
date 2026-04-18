@@ -38,6 +38,33 @@ const eventStyles: Record<EventType, string> = {
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected";
 
+function playGoalSound() {
+  try {
+    const ctx = new AudioContext();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = "sine";
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      osc.start(t);
+      osc.stop(t + 0.25);
+    });
+  } catch {
+    // AudioContext not available
+  }
+}
+
+function triggerGoalFeedback() {
+  navigator.vibrate?.([300, 100, 300, 100, 600]);
+  playGoalSound();
+}
+
 export default function LivePage() {
   const [events, setEvents] = useState<LiveEvent[]>([]);
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
@@ -62,6 +89,7 @@ export default function LivePage() {
         id: `${Date.now()}-${Math.random()}`,
         timestamp: new Date(),
       };
+      if (data.type === "goal") triggerGoalFeedback();
       setEvents((prev) => [...prev, newEvent]);
     });
 
@@ -76,6 +104,7 @@ export default function LivePage() {
           description: data.scorer ? `Gescoord door ${data.scorer}` : undefined,
           timestamp: new Date(),
         };
+        triggerGoalFeedback();
         setEvents((prev) => [...prev, goalEvent]);
       }
     );

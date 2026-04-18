@@ -17,11 +17,31 @@ interface Match {
 
 type ScoreUpdate = Partial<Pick<Match, "home_score" | "away_score" | "status">>;
 
+type EventType = "kickoff" | "goal" | "card" | "sub" | "fulltime" | "message";
+
 const STATUS_OPTIONS = [
   { value: "upcoming", label: "Gepland", active: "bg-blue-100 text-blue-700 border-blue-200", inactive: "text-gray-400 border-gray-100" },
   { value: "live", label: "● Live", active: "bg-green-500 text-white border-green-500", inactive: "text-gray-400 border-gray-100" },
   { value: "finished", label: "Gespeeld", active: "bg-gray-200 text-gray-700 border-gray-200", inactive: "text-gray-400 border-gray-100" },
 ];
+
+const EVENT_BUTTONS: { type: EventType; emoji: string; label: string; hasInput?: boolean; inputPlaceholder?: string }[] = [
+  { type: "kickoff", emoji: "▶️", label: "Aftrap" },
+  { type: "goal", emoji: "⚽", label: "Doelpunt", hasInput: true, inputPlaceholder: "Naam scorer (optioneel)" },
+  { type: "card", emoji: "🟡", label: "Kaart", hasInput: true, inputPlaceholder: "Speler + geel/rood" },
+  { type: "sub", emoji: "🔄", label: "Wissel", hasInput: true, inputPlaceholder: "In/uit (optioneel)" },
+  { type: "fulltime", emoji: "🏁", label: "Einde" },
+  { type: "message", emoji: "💬", label: "Bericht", hasInput: true, inputPlaceholder: "Typ een bericht…" },
+];
+
+const EVENT_TITLES: Record<EventType, (opponent: string, input: string) => string> = {
+  kickoff: (opponent) => `Aftrap! VVC vs ${opponent}`,
+  goal: (_opp, input) => input ? `⚽ DOELPUNT! Gescoord door ${input}` : "⚽ DOELPUNT VVC!",
+  card: (_opp, input) => input ? `🟡 Kaart voor ${input}` : "🟡 Kaart",
+  sub: (_opp, input) => input ? `🔄 Wissel: ${input}` : "🔄 Wissel",
+  fulltime: (_opp) => "🏁 Einde wedstrijd",
+  message: (_opp, input) => input,
+};
 
 function isToday(dateStr: string) {
   const d = new Date(dateStr);
@@ -31,6 +51,101 @@ function isToday(dateStr: string) {
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" });
+}
+
+function LiveCommentaar({ match }: { match: Match }) {
+  const [activeEvent, setActiveEvent] = useState<EventType | null>(null);
+  const [inputVal, setInputVal] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const sendEvent = async (type: EventType) => {
+    const btn = EVENT_BUTTONS.find((b) => b.type === type)!;
+    if (btn.hasInput && activeEvent !== type) {
+      setActiveEvent(type);
+      setInputVal("");
+      return;
+    }
+
+    const title = EVENT_TITLES[type](match.opponent, inputVal.trim());
+    if (type === "message" && !title) {
+      toast.error("Typ eerst een bericht");
+      return;
+    }
+
+    setSending(true);
+    try {
+      await fetch("/api/pusher/trigger", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          channel: "wedstrijden",
+          event: "live-event",
+          data: {
+            type,
+            title,
+            description: type === "goal" && inputVal.trim() ? `Gescoord door ${inputVal.trim()}` : undefined,
+          },
+        }),
+      });
+      toast.success(`Verstuurd: ${EVENT_BUTTONS.find((b) => b.type === type)?.label}`, { duration: 1500 });
+      setActiveEvent(null);
+      setInputVal("");
+    } catch {
+      toast.error("Versturen mislukt");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="px-4 pb-5 border-t border-gray-100 pt-4">
+      <p className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-3">Live commentaar</p>
+      <div className="grid grid-cols-3 gap-2">
+        {EVENT_BUTTONS.map((btn) => (
+          <button
+            key={btn.type}
+            onClick={() => sendEvent(btn.type)}
+            disabled={sending}
+            className={`py-2.5 rounded-xl text-sm font-bold border transition-all flex flex-col items-center gap-0.5 ${
+              activeEvent === btn.type
+                ? "bg-orange-500 text-white border-orange-500"
+                : "bg-gray-50 text-gray-700 border-gray-100 active:bg-gray-100"
+            }`}
+          >
+            <span className="text-lg leading-none">{btn.emoji}</span>
+            <span className="text-[11px]">{btn.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {activeEvent && EVENT_BUTTONS.find((b) => b.type === activeEvent)?.hasInput && (
+        <div className="mt-3 flex gap-2">
+          <input
+            autoFocus
+            type="text"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendEvent(activeEvent)}
+            placeholder={EVENT_BUTTONS.find((b) => b.type === activeEvent)?.inputPlaceholder ?? ""}
+            className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-orange-400"
+          />
+          <button
+            onClick={() => sendEvent(activeEvent)}
+            disabled={sending}
+            className="px-4 py-2.5 rounded-xl bg-orange-500 text-white text-sm font-bold active:bg-orange-600 disabled:opacity-50"
+          >
+            Stuur
+          </button>
+          <button
+            onClick={() => setActiveEvent(null)}
+            className="px-3 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-sm"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MatchCard({ match, saving, onUpdate }: { match: Match; saving: boolean; onUpdate: (d: ScoreUpdate) => void }) {
@@ -109,6 +224,9 @@ function MatchCard({ match, saving, onUpdate }: { match: Match; saving: boolean;
           </div>
         </div>
       </div>
+
+      {/* Live commentary — only shown when match is live */}
+      {isLive && <LiveCommentaar match={match} />}
     </div>
   );
 }
