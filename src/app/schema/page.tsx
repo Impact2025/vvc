@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/db";
 import { matches } from "@/db/schema";
 import { asc } from "drizzle-orm";
@@ -10,6 +11,7 @@ import MatchFilter from "./MatchFilter";
 import type { Match } from "@/db/schema";
 
 async function getData(): Promise<Match[]> {
+  noStore();
   try {
     return await db.select().from(matches).orderBy(asc(matches.date));
   } catch {

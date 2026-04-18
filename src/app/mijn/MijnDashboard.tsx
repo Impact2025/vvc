@@ -277,8 +277,6 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
   const [caption, setCaption] = useState("");
   const [matchId, setMatchId] = useState("");
   const [status, setStatus] = useState<"idle" | "uploading" | "done" | "error">("idle");
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleFile = (f: File) => {
     setFile(f);
     setPreview(URL.createObjectURL(f));
@@ -324,8 +322,8 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
             </div>
           ) : (
             <>
-              <div
-                onClick={() => inputRef.current?.click()}
+              <label
+                htmlFor="mijn-foto-input"
                 className="border-2 border-dashed border-outline-variant/40 rounded-xl aspect-video flex flex-col items-center justify-center cursor-pointer hover:border-primary-container/60 hover:bg-surface-container/30 transition-colors mb-4 overflow-hidden relative"
               >
                 {preview ? (
@@ -337,8 +335,8 @@ function UploadModal({ parentId, parentNaam, matches, onClose, onSuccess }: {
                     <p className="text-xs text-outline mt-1">JPG, PNG of HEIC</p>
                   </>
                 )}
-              </div>
-              <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+              </label>
+              <input id="mijn-foto-input" type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
               <input type="text" placeholder="Bijschrift (optioneel)" value={caption} onChange={(e) => setCaption(e.target.value)} className="w-full border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm mb-3 focus:border-primary-container focus:outline-none" />
               <select value={matchId} onChange={(e) => setMatchId(e.target.value)} className="w-full border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm mb-4 focus:border-primary-container focus:outline-none">
                 <option value="">Geen wedstrijd gekoppeld</option>
