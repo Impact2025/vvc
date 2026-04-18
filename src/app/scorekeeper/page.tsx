@@ -30,22 +30,22 @@ const STATUS_OPTIONS = [
   { value: "finished", label: "Gespeeld", active: "bg-gray-200 text-gray-700 border-gray-200",     inactive: "text-gray-400 border-gray-100" },
 ];
 
-const EVENT_BUTTONS: { type: EventType; emoji: string; label: string; hasInput?: boolean; inputPlaceholder?: string }[] = [
-  { type: "kickoff",  emoji: "▶️", label: "Aftrap" },
-  { type: "goal",     emoji: "⚽", label: "Doelpunt", hasInput: true, inputPlaceholder: "Naam scorer (optioneel)" },
-  { type: "card",     emoji: "🟡", label: "Kaart",    hasInput: true, inputPlaceholder: "Speler + geel/rood" },
-  { type: "sub",      emoji: "🔄", label: "Wissel",   hasInput: true, inputPlaceholder: "In/uit (optioneel)" },
-  { type: "fulltime", emoji: "🏁", label: "Einde" },
-  { type: "message",  emoji: "💬", label: "Bericht",  hasInput: true, inputPlaceholder: "Typ een bericht…" },
+const EVENT_BUTTONS: { type: EventType; label: string; needsPlayer?: boolean; twoStep?: boolean }[] = [
+  { type: "kickoff",  label: "Aftrap" },
+  { type: "goal",     label: "Doelpunt",  needsPlayer: true },
+  { type: "card",     label: "Kaart",     needsPlayer: true },
+  { type: "sub",      label: "Wissel",    needsPlayer: true, twoStep: true },
+  { type: "fulltime", label: "Einde" },
+  { type: "message",  label: "Bericht" },
 ];
 
 const EVENT_TITLES: Record<EventType, (opponent: string, input: string) => string> = {
-  kickoff:  (opponent)       => `Aftrap! VVC vs ${opponent}`,
-  goal:     (_opp, input)    => input ? `⚽ DOELPUNT! Gescoord door ${input}` : "⚽ DOELPUNT VVC!",
-  card:     (_opp, input)    => input ? `🟡 Kaart voor ${input}` : "🟡 Kaart",
-  sub:      (_opp, input)    => input ? `🔄 Wissel: ${input}` : "🔄 Wissel",
-  fulltime: (_opp)           => "🏁 Einde wedstrijd",
-  message:  (_opp, input)    => input,
+  kickoff:  (opponent)    => `Aftrap! VVC vs ${opponent}`,
+  goal:     (_opp, input) => input ? `DOELPUNT! Gescoord door ${input}` : "DOELPUNT VVC!",
+  card:     (_opp, input) => input ? `Kaart voor ${input}` : "Kaart",
+  sub:      (_opp, input) => input ? `Wissel: ${input}` : "Wissel",
+  fulltime: ()            => "Einde wedstrijd",
+  message:  (_opp, input) => input,
 };
 
 function isToday(dateStr: string) {
@@ -110,67 +110,110 @@ function ScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
 }
 
 /* ─── Live Commentaar ──────────────────────────────────────────────────────── */
-function LiveCommentaar({ match }: { match: Match }) {
+function LiveCommentaar({ match, players }: { match: Match; players: Player[] }) {
   const [activeEvent, setActiveEvent] = useState<EventType | null>(null);
-  const [inputVal, setInputVal] = useState("");
+  const [subStep, setSubStep] = useState<"uit" | "in">("uit");
+  const [subUit, setSubUit] = useState("");
+  const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
 
-  const sendEvent = async (type: EventType) => {
-    const btn = EVENT_BUTTONS.find((b) => b.type === type)!;
-    if (btn.hasInput && activeEvent !== type) {
-      setActiveEvent(type);
-      setInputVal("");
-      return;
-    }
-    const title = EVENT_TITLES[type](match.opponent, inputVal.trim());
-    if (type === "message" && !title) { toast.error("Typ eerst een bericht"); return; }
+  const reset = () => { setActiveEvent(null); setSubStep("uit"); setSubUit(""); setMessageText(""); };
+
+  const send = async (type: EventType, title: string) => {
+    if (!title) return;
     setSending(true);
     try {
       await fetch("/api/pusher/trigger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channel: "wedstrijden",
-          event: "live-event",
-          data: { type, title, description: type === "goal" && inputVal.trim() ? `Gescoord door ${inputVal.trim()}` : undefined },
-        }),
+        body: JSON.stringify({ channel: "wedstrijden", event: "live-event", data: { type, title } }),
       });
-      toast.success(`Verstuurd: ${btn.label}`, { duration: 1500 });
-      setActiveEvent(null);
-      setInputVal("");
+      toast.success(EVENT_BUTTONS.find((b) => b.type === type)!.label + " verstuurd", { duration: 1500 });
+      reset();
     } catch { toast.error("Versturen mislukt"); }
     finally { setSending(false); }
   };
 
+  const handleEventBtn = (type: EventType) => {
+    if (type === "kickoff") return send(type, `Aftrap! VVC vs ${match.opponent}`);
+    if (type === "fulltime") return send(type, "Einde wedstrijd");
+    setActiveEvent(type);
+    setSubStep("uit");
+    setSubUit("");
+    setMessageText("");
+  };
+
+  const handlePlayerPick = (name: string) => {
+    if (activeEvent === "goal") return send("goal", `Doelpunt door ${name}`);
+    if (activeEvent === "card") return send("card", `Kaart voor ${name}`);
+    if (activeEvent === "sub") {
+      if (subStep === "uit") { setSubUit(name); setSubStep("in"); }
+      else send("sub", `Wissel: ${subUit} eruit, ${name} erin`);
+    }
+  };
+
+  const pickerLabel =
+    activeEvent === "goal" ? "Wie scoorde?" :
+    activeEvent === "card" ? "Voor wie is de kaart?" :
+    activeEvent === "sub" && subStep === "uit" ? "Wie gaat eruit?" :
+    "Wie komt erin?";
+
+  const showPlayerGrid = activeEvent === "goal" || activeEvent === "card" || activeEvent === "sub";
+
   return (
     <div className="px-4 pb-5 border-t border-gray-100 pt-4">
       <p className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-3">Live commentaar</p>
+
       <div className="grid grid-cols-3 gap-2">
         {EVENT_BUTTONS.map((btn) => (
           <button
             key={btn.type}
-            onClick={() => sendEvent(btn.type)}
+            onClick={() => handleEventBtn(btn.type)}
             disabled={sending}
-            className={`py-2.5 rounded-xl text-sm font-bold border transition-all flex flex-col items-center gap-0.5 ${
+            className={`py-2.5 rounded-xl text-xs font-bold border transition-all ${
               activeEvent === btn.type ? "bg-orange-500 text-white border-orange-500" : "bg-gray-50 text-gray-700 border-gray-100 active:bg-gray-100"
             }`}
           >
-            <span className="text-lg leading-none">{btn.emoji}</span>
-            <span className="text-[11px]">{btn.label}</span>
+            {btn.label}
           </button>
         ))}
       </div>
-      {activeEvent && EVENT_BUTTONS.find((b) => b.type === activeEvent)?.hasInput && (
+
+      {showPlayerGrid && (
+        <div className="mt-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold text-gray-500">{pickerLabel}</p>
+            <button onClick={reset} className="text-xs text-gray-400 px-2 py-1 rounded-lg hover:bg-gray-100">Annuleren</button>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {players.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => handlePlayerPick(p.name)}
+                disabled={sending}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-gray-100 bg-gray-50 active:bg-orange-50 active:border-orange-300 transition-colors text-left"
+              >
+                <span className="w-8 h-8 rounded-lg bg-gray-800 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
+                  {p.number ?? "–"}
+                </span>
+                <span className="font-semibold text-gray-800 text-sm">{p.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeEvent === "message" && (
         <div className="mt-3 flex gap-2">
           <input
-            autoFocus type="text" value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendEvent(activeEvent)}
-            placeholder={EVENT_BUTTONS.find((b) => b.type === activeEvent)?.inputPlaceholder ?? ""}
+            autoFocus type="text" value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send("message", messageText.trim())}
+            placeholder="Typ een bericht…"
             className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-orange-400"
           />
-          <button onClick={() => sendEvent(activeEvent)} disabled={sending} className="px-4 py-2.5 rounded-xl bg-orange-500 text-white text-sm font-bold active:bg-orange-600 disabled:opacity-50">Stuur</button>
-          <button onClick={() => setActiveEvent(null)} className="px-3 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-sm">✕</button>
+          <button onClick={() => send("message", messageText.trim())} disabled={sending || !messageText.trim()} className="px-4 py-2.5 rounded-xl bg-orange-500 text-white text-sm font-bold active:bg-orange-600 disabled:opacity-50">Stuur</button>
+          <button onClick={reset} className="px-3 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-sm">✕</button>
         </div>
       )}
     </div>
@@ -263,7 +306,7 @@ function MatchCard({ match, saving, players, onUpdate }: {
           </div>
         </div>
 
-        {isLive && <LiveCommentaar match={match} />}
+        {isLive && <LiveCommentaar match={match} players={players} />}
       </div>
 
       {pendingGoal !== null && (
