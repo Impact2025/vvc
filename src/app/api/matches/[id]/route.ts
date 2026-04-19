@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { matches } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { matches, players } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { pusherServer } from "@/lib/pusher";
 import { broadcastPush } from "@/lib/sendPush";
 
@@ -29,7 +30,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const id = parseInt(params.id);
     const body = await req.json();
-    const { opponent, date, time, location, home_score, away_score, status, scorer_name } = body;
+    const { opponent, date, time, location, home_score, away_score, status, scorer_name, assist_name } = body;
 
     const [current] = await db.select().from(matches).where(eq(matches.id, id));
     if (!current) {
@@ -45,11 +46,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     if (away_score !== undefined) updateData.away_score = away_score;
     if (status !== undefined) updateData.status = status;
 
-    if (
-      home_score !== undefined &&
-      home_score > (current.home_score ?? 0) &&
-      scorer_name
-    ) {
+    const isNewGoal = home_score !== undefined && home_score > (current.home_score ?? 0);
+
+    if (isNewGoal && scorer_name) {
       const scorers: string[] = JSON.parse(current.home_scorers ?? "[]");
       scorers.push(scorer_name);
       updateData.home_scorers = JSON.stringify(scorers);
@@ -60,6 +59,20 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       .set(updateData)
       .where(eq(matches.id, id))
       .returning();
+
+    if (isNewGoal) {
+      if (scorer_name) {
+        await db.update(players)
+          .set({ goals: sql`${players.goals} + 1` })
+          .where(eq(players.name, scorer_name));
+      }
+      if (assist_name) {
+        await db.update(players)
+          .set({ assists: sql`${players.assists} + 1` })
+          .where(eq(players.name, assist_name));
+      }
+      revalidatePath("/kids");
+    }
 
     if (!updated) {
       return NextResponse.json({ error: "Match not found" }, { status: 404 });

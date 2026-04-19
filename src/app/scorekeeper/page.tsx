@@ -22,6 +22,7 @@ interface Player {
 }
 
 type ScoreUpdate = Partial<Pick<Match, "home_score" | "away_score" | "status">>;
+type GoalStep = "scorer" | "assist";
 type EventType = "kickoff" | "goal" | "card" | "sub" | "fulltime" | "message";
 
 const STATUS_OPTIONS = [
@@ -58,21 +59,27 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" });
 }
 
-/* ─── Scorer Picker ────────────────────────────────────────────────────────── */
-function ScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
+/* ─── Goal Picker Sheet (scorer + assist) ──────────────────────────────────── */
+function GoalPickerSheet({ match, newScore, players, step, scorerName, onPickScorer, onPickAssist, onCancel }: {
   match: Match;
   newScore: number;
   players: Player[];
-  onConfirm: (scorer: string | null) => void;
+  step: GoalStep;
+  scorerName: string | null;
+  onPickScorer: (name: string | null) => void;
+  onPickAssist: (name: string | null) => void;
   onCancel: () => void;
 }) {
+  const isAssist = step === "assist";
   return (
     <div className="fixed inset-0 z-50 flex items-end">
       <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
       <div className="relative bg-white w-full rounded-t-2xl px-5 pt-5 pb-8 max-h-[80vh] overflow-y-auto shadow-xl">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 mb-0.5">Doelpunt VVC!</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 mb-0.5">
+              {isAssist ? `⚽ ${scorerName ?? "Doelpunt"} — stap 2/2` : "Doelpunt VVC! — stap 1/2"}
+            </p>
             <p className="font-black text-gray-900 text-lg">
               {newScore} – {match.away_score}
               <span className="text-sm font-normal text-gray-400 ml-2">vs {match.opponent}</span>
@@ -81,28 +88,32 @@ function ScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
           <button onClick={onCancel} className="text-gray-400 text-xl p-1">✕</button>
         </div>
 
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Wie scoorde?</p>
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+          {isAssist ? "Wie gaf de assist?" : "Wie scoorde?"}
+        </p>
 
         <div className="grid grid-cols-2 gap-2 mb-3">
-          {players.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => onConfirm(p.name)}
-              className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 active:bg-orange-50 active:border-orange-300 transition-colors text-left"
-            >
-              <span className="w-9 h-9 rounded-xl bg-orange-500 text-white text-sm font-black flex items-center justify-center flex-shrink-0">
-                {p.number ?? "?"}
-              </span>
-              <span className="font-bold text-gray-800 text-sm">{p.name}</span>
-            </button>
-          ))}
+          {players
+            .filter((p) => !isAssist || p.name !== scorerName)
+            .map((p) => (
+              <button
+                key={p.id}
+                onClick={() => isAssist ? onPickAssist(p.name) : onPickScorer(p.name)}
+                className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 active:bg-orange-50 active:border-orange-300 transition-colors text-left"
+              >
+                <span className="w-9 h-9 rounded-xl bg-orange-500 text-white text-sm font-black flex items-center justify-center flex-shrink-0">
+                  {p.number ?? "?"}
+                </span>
+                <span className="font-bold text-gray-800 text-sm">{p.name}</span>
+              </button>
+            ))}
         </div>
 
         <button
-          onClick={() => onConfirm(null)}
+          onClick={() => isAssist ? onPickAssist(null) : onPickScorer(null)}
           className="w-full py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-500 active:bg-gray-50"
         >
-          Onbekend / Overslaan
+          {isAssist ? "Geen assist / Overslaan" : "Onbekend / Overslaan"}
         </button>
       </div>
     </div>
@@ -225,21 +236,38 @@ function MatchCard({ match, saving, players, onUpdate }: {
   match: Match;
   saving: boolean;
   players: Player[];
-  onUpdate: (d: ScoreUpdate, scorer?: string) => void;
+  onUpdate: (d: ScoreUpdate, scorer?: string, assist?: string) => void;
 }) {
   const [pendingGoal, setPendingGoal] = useState<number | null>(null);
+  const [goalStep, setGoalStep] = useState<GoalStep>("scorer");
+  const [pendingScorer, setPendingScorer] = useState<string | null>(null);
   const isLive = match.status === "live";
   const opponentShort = match.opponent.split(" ").slice(0, 2).join(" ");
 
   const handleVVCGoal = () => {
     if (saving) return;
     setPendingGoal(match.home_score + 1);
+    setGoalStep("scorer");
+    setPendingScorer(null);
   };
 
-  const confirmGoal = (scorer: string | null) => {
+  const handlePickScorer = (scorer: string | null) => {
+    setPendingScorer(scorer);
+    setGoalStep("assist");
+  };
+
+  const handlePickAssist = (assist: string | null) => {
     if (pendingGoal === null) return;
-    onUpdate({ home_score: pendingGoal }, scorer ?? undefined);
+    onUpdate({ home_score: pendingGoal }, pendingScorer ?? undefined, assist ?? undefined);
     setPendingGoal(null);
+    setPendingScorer(null);
+    setGoalStep("scorer");
+  };
+
+  const cancelGoal = () => {
+    setPendingGoal(null);
+    setPendingScorer(null);
+    setGoalStep("scorer");
   };
 
   return (
@@ -310,12 +338,15 @@ function MatchCard({ match, saving, players, onUpdate }: {
       </div>
 
       {pendingGoal !== null && (
-        <ScorerPicker
+        <GoalPickerSheet
           match={match}
           newScore={pendingGoal}
           players={players}
-          onConfirm={confirmGoal}
-          onCancel={() => setPendingGoal(null)}
+          step={goalStep}
+          scorerName={pendingScorer}
+          onPickScorer={handlePickScorer}
+          onPickAssist={handlePickAssist}
+          onCancel={cancelGoal}
         />
       )}
     </>
@@ -350,17 +381,24 @@ export default function ScorekeeperPage() {
     fetch("/api/players").then((r) => r.json()).then(setPlayers);
   }, [fetchMatches]);
 
-  const update = useCallback(async (id: number, data: ScoreUpdate, scorer?: string) => {
+  const update = useCallback(async (id: number, data: ScoreUpdate, scorer?: string, assist?: string) => {
     setSaving(id);
     setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, ...data } : m)));
     try {
       const res = await fetch(`/api/matches/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, ...(scorer ? { scorer_name: scorer } : {}) }),
+        body: JSON.stringify({
+          ...data,
+          ...(scorer ? { scorer_name: scorer } : {}),
+          ...(assist ? { assist_name: assist } : {}),
+        }),
       });
       if (!res.ok) throw new Error();
-      toast.success(scorer ? `⚽ ${scorer} scoort!` : "Opgeslagen ✓", { duration: 1800, style: { fontWeight: "bold" } });
+      const label = scorer
+        ? assist ? `⚽ ${scorer} (assist: ${assist})` : `⚽ ${scorer} scoort!`
+        : "Opgeslagen ✓";
+      toast.success(label, { duration: 2200, style: { fontWeight: "bold" } });
     } catch {
       toast.error("Opslaan mislukt");
       fetchMatches();
@@ -400,7 +438,7 @@ export default function ScorekeeperPage() {
                 <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-3">Vandaag</p>
                 <div className="space-y-4">
                   {todayMatches.map((m) => (
-                    <MatchCard key={m.id} match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
+                    <MatchCard key={m.id} match={m} players={players} saving={saving === m.id} onUpdate={(d, s, a) => update(m.id, d, s, a)} />
                   ))}
                 </div>
               </section>
@@ -413,7 +451,7 @@ export default function ScorekeeperPage() {
                   {otherMatches.map((m) => (
                     <div key={m.id}>
                       <p className="text-xs text-gray-400 mb-1.5 ml-1">{formatDate(m.date)}</p>
-                      <MatchCard match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
+                      <MatchCard match={m} players={players} saving={saving === m.id} onUpdate={(d, s, a) => update(m.id, d, s, a)} />
                     </div>
                   ))}
                 </div>

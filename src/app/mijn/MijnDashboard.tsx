@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Camera, BookOpen, LogOut, CheckCircle, X,
-  Upload, Clock, Image as ImageIcon, ChevronRight, Trash2,
+  Upload, Clock, Image as ImageIcon, ChevronRight, Trash2, Bell, BellOff,
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import type { ParentSession } from "@/lib/parentSession";
@@ -117,6 +117,91 @@ export default function MijnDashboard({ parent, matches }: Props) {
   );
 }
 
+/* ─── Notification Card ─────────────────────────────────────────────────── */
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const output = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) output[i] = rawData.charCodeAt(i);
+  return output;
+}
+
+function NotificationCard() {
+  const [permission, setPermission] = useState<NotificationPermission | null>(null);
+  const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+    setPermission(Notification.permission);
+    if (Notification.permission === 'granted') {
+      navigator.serviceWorker.ready.then((reg) =>
+        reg.pushManager.getSubscription().then((sub) => setSubscribed(!!sub))
+      );
+    }
+  }, []);
+
+  async function handleEnable() {
+    setLoading(true);
+    try {
+      const perm = await Notification.requestPermission();
+      setPermission(perm);
+      if (perm !== 'granted') return;
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidKey) return;
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidKey),
+        });
+      }
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: sub }),
+      });
+      localStorage.removeItem('push_dismissed');
+      setSubscribed(true);
+      toast.success('Meldingen ingeschakeld!');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return null;
+
+  const isOn = permission === 'granted' && subscribed;
+  const isDenied = permission === 'denied';
+
+  return (
+    <div className="bg-white border border-outline-variant/15 rounded-2xl p-4 shadow-sm flex items-center gap-3">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${isOn ? 'bg-green-100' : 'bg-surface-container'}`}>
+        {isOn ? <Bell size={18} className="text-green-600" /> : <BellOff size={18} className="text-outline" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-on-surface">{isOn ? 'Meldingen aan' : 'Meldingen uit'}</p>
+        <p className="text-xs text-on-surface-variant">
+          {isOn ? 'Je ontvangt meldingen bij doelpunten en updates'
+            : isDenied ? 'Geblokkeerd — wijzig in browser-instellingen'
+            : 'Zet aan voor meldingen bij doelpunten'}
+        </p>
+      </div>
+      {!isOn && !isDenied && (
+        <button
+          onClick={handleEnable}
+          disabled={loading}
+          className="flex-shrink-0 bg-primary-container text-white text-xs font-bold py-2 px-3 rounded-xl disabled:opacity-50"
+        >
+          {loading ? '...' : 'Aanzetten'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ─── Home Tab ──────────────────────────────────────────────────────────── */
 function HomeTab({ parent, onNavigate }: { parent: ParentSession; onNavigate: (t: Tab) => void }) {
   return (
@@ -136,6 +221,8 @@ function HomeTab({ parent, onNavigate }: { parent: ParentSession; onNavigate: (t
           onClick={() => onNavigate("dagboek")}
         />
       </div>
+
+      <NotificationCard />
 
       <div className="bg-white border border-outline-variant/15 rounded-2xl p-5 shadow-sm">
         <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3">Snelle links</p>
@@ -480,6 +567,7 @@ interface MatchFull {
 interface MijnPlayer { id: number; name: string; number: number | null; }
 
 type ScoreUpdate = Partial<Pick<MatchFull, "home_score" | "away_score" | "status">>;
+type GoalStep = "scorer" | "assist";
 
 const SCORE_STATUS = [
   { value: "upcoming", label: "Gepland", active: "bg-blue-100 text-blue-700 border-blue-200" },
@@ -493,17 +581,23 @@ function isMatchToday(dateStr: string) {
   return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
 }
 
-function MijnScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
+function MijnGoalPickerSheet({ match, newScore, players, step, scorerName, onPickScorer, onPickAssist, onCancel }: {
   match: MatchFull; newScore: number; players: MijnPlayer[];
-  onConfirm: (scorer: string | null) => void; onCancel: () => void;
+  step: GoalStep; scorerName: string | null;
+  onPickScorer: (name: string | null) => void;
+  onPickAssist: (name: string | null) => void;
+  onCancel: () => void;
 }) {
+  const isAssist = step === "assist";
   return (
     <div className="fixed inset-0 z-50 flex items-end">
       <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
       <div className="relative bg-white w-full rounded-t-2xl px-5 pt-5 pb-8 max-h-[80vh] overflow-y-auto shadow-xl">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary-container mb-0.5">Doelpunt VVC!</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary-container mb-0.5">
+              {isAssist ? `⚽ ${scorerName ?? "Doelpunt"} — stap 2/2` : "Doelpunt VVC! — stap 1/2"}
+            </p>
             <p className="font-black text-on-surface text-lg">
               {newScore} – {match.away_score}
               <span className="text-sm font-normal text-on-surface-variant ml-2">vs {match.opponent}</span>
@@ -511,23 +605,27 @@ function MijnScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
           </div>
           <button onClick={onCancel} className="text-on-surface-variant text-xl p-1">✕</button>
         </div>
-        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">Wie scoorde?</p>
+        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+          {isAssist ? "Wie gaf de assist?" : "Wie scoorde?"}
+        </p>
         <div className="grid grid-cols-2 gap-2 mb-3">
-          {players.map((p) => (
-            <button key={p.id} onClick={() => onConfirm(p.name)}
-              className="flex items-center gap-3 p-3 rounded-xl border border-outline-variant/15 bg-surface-container-low active:bg-primary-container/10 active:border-primary-container/30 transition-colors text-left"
-            >
-              <span className="w-9 h-9 rounded-xl bg-primary-container text-white text-sm font-black flex items-center justify-center flex-shrink-0">
-                {p.number ?? "?"}
-              </span>
-              <span className="font-bold text-on-surface text-sm">{p.name}</span>
-            </button>
-          ))}
+          {players
+            .filter((p) => !isAssist || p.name !== scorerName)
+            .map((p) => (
+              <button key={p.id} onClick={() => isAssist ? onPickAssist(p.name) : onPickScorer(p.name)}
+                className="flex items-center gap-3 p-3 rounded-xl border border-outline-variant/15 bg-surface-container-low active:bg-primary-container/10 active:border-primary-container/30 transition-colors text-left"
+              >
+                <span className="w-9 h-9 rounded-xl bg-primary-container text-white text-sm font-black flex items-center justify-center flex-shrink-0">
+                  {p.number ?? "?"}
+                </span>
+                <span className="font-bold text-on-surface text-sm">{p.name}</span>
+              </button>
+            ))}
         </div>
-        <button onClick={() => onConfirm(null)}
+        <button onClick={() => isAssist ? onPickAssist(null) : onPickScorer(null)}
           className="w-full py-3 rounded-xl border border-outline-variant/20 text-sm font-semibold text-on-surface-variant"
         >
-          Onbekend / Overslaan
+          {isAssist ? "Geen assist / Overslaan" : "Onbekend / Overslaan"}
         </button>
       </div>
     </div>
@@ -536,15 +634,30 @@ function MijnScorerPicker({ match, newScore, players, onConfirm, onCancel }: {
 
 function ScoreMatchCard({ match, saving, players, onUpdate }: {
   match: MatchFull; saving: boolean; players: MijnPlayer[];
-  onUpdate: (d: ScoreUpdate, scorer?: string) => void;
+  onUpdate: (d: ScoreUpdate, scorer?: string, assist?: string) => void;
 }) {
   const [pendingGoal, setPendingGoal] = useState<number | null>(null);
+  const [goalStep, setGoalStep] = useState<GoalStep>("scorer");
+  const [pendingScorer, setPendingScorer] = useState<string | null>(null);
   const opponentShort = match.opponent.split(" ").slice(0, 2).join(" ");
 
-  const confirmGoal = (scorer: string | null) => {
+  const handlePickScorer = (scorer: string | null) => {
+    setPendingScorer(scorer);
+    setGoalStep("assist");
+  };
+
+  const handlePickAssist = (assist: string | null) => {
     if (pendingGoal === null) return;
-    onUpdate({ home_score: pendingGoal }, scorer ?? undefined);
+    onUpdate({ home_score: pendingGoal }, pendingScorer ?? undefined, assist ?? undefined);
     setPendingGoal(null);
+    setPendingScorer(null);
+    setGoalStep("scorer");
+  };
+
+  const cancelGoal = () => {
+    setPendingGoal(null);
+    setPendingScorer(null);
+    setGoalStep("scorer");
   };
 
   return (
@@ -577,7 +690,7 @@ function ScoreMatchCard({ match, saving, players, onUpdate }: {
                 className="w-12 h-12 rounded-xl bg-surface-container text-xl font-bold text-on-surface-variant active:bg-surface-container-high disabled:opacity-30 flex items-center justify-center"
               >−</button>
               <span className="flex-1 text-center text-5xl font-black text-on-surface tabular-nums">{match.home_score}</span>
-              <button onClick={() => setPendingGoal(match.home_score + 1)}
+              <button onClick={() => { setPendingGoal(match.home_score + 1); setGoalStep("scorer"); setPendingScorer(null); }}
                 disabled={saving}
                 className="w-12 h-12 rounded-xl bg-primary-container text-xl font-bold text-white active:opacity-80 flex items-center justify-center shadow-sm"
               >+</button>
@@ -602,8 +715,13 @@ function ScoreMatchCard({ match, saving, players, onUpdate }: {
       </div>
 
       {pendingGoal !== null && (
-        <MijnScorerPicker match={match} newScore={pendingGoal} players={players}
-          onConfirm={confirmGoal} onCancel={() => setPendingGoal(null)} />
+        <MijnGoalPickerSheet
+          match={match} newScore={pendingGoal} players={players}
+          step={goalStep} scorerName={pendingScorer}
+          onPickScorer={handlePickScorer}
+          onPickAssist={handlePickAssist}
+          onCancel={cancelGoal}
+        />
       )}
     </>
   );
@@ -636,17 +754,24 @@ function ScoresTab() {
     fetch("/api/players").then((r) => r.json()).then(setPlayers);
   }, [fetchMatches]);
 
-  const update = useCallback(async (id: number, data: ScoreUpdate, scorer?: string) => {
+  const update = useCallback(async (id: number, data: ScoreUpdate, scorer?: string, assist?: string) => {
     setSaving(id);
     setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, ...data } : m)));
     try {
       const res = await fetch(`/api/matches/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, ...(scorer ? { scorer_name: scorer } : {}) }),
+        body: JSON.stringify({
+          ...data,
+          ...(scorer ? { scorer_name: scorer } : {}),
+          ...(assist ? { assist_name: assist } : {}),
+        }),
       });
       if (!res.ok) throw new Error();
-      toast.success(scorer ? `⚽ ${scorer} scoort!` : "Opgeslagen ✓", { duration: 1800 });
+      const label = scorer
+        ? assist ? `⚽ ${scorer} (assist: ${assist})` : `⚽ ${scorer} scoort!`
+        : "Opgeslagen ✓";
+      toast.success(label, { duration: 2200 });
     } catch {
       toast.error("Opslaan mislukt");
       fetchMatches();
@@ -674,7 +799,7 @@ function ScoresTab() {
           <p className="text-xs font-bold uppercase tracking-widest text-primary-container mb-3">Vandaag</p>
           <div className="space-y-4">
             {todayMatches.map((m) => (
-              <ScoreMatchCard key={m.id} match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
+              <ScoreMatchCard key={m.id} match={m} players={players} saving={saving === m.id} onUpdate={(d, s, a) => update(m.id, d, s, a)} />
             ))}
           </div>
         </section>
@@ -689,7 +814,7 @@ function ScoresTab() {
                 <p className="text-xs text-on-surface-variant mb-1.5 ml-1">
                   {new Date(m.date).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" })}
                 </p>
-                <ScoreMatchCard match={m} players={players} saving={saving === m.id} onUpdate={(d, s) => update(m.id, d, s)} />
+                <ScoreMatchCard match={m} players={players} saving={saving === m.id} onUpdate={(d, s, a) => update(m.id, d, s, a)} />
               </div>
             ))}
           </div>
