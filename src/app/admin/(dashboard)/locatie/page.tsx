@@ -23,7 +23,10 @@ export default function LocatiePage() {
   useEffect(() => {
     fetch("/api/location")
       .then((r) => r.json())
-      .then((data) => setServer(data))
+      .then((data) => {
+        setServer(data);
+        if (data.active) setStatusMsg("GPS actief (server)");
+      })
       .catch(console.error);
   }, []);
 
@@ -128,13 +131,24 @@ export default function LocatiePage() {
           )}
 
           {!isTracking ? (
-            <button
-              onClick={startTracking}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1a3e8f] text-white font-bold font-headline text-sm hover:bg-[#162f6b] transition-colors w-full justify-center"
-            >
-              <Navigation size={18} />
-              Locatie delen starten
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={startTracking}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1a3e8f] text-white font-bold font-headline text-sm hover:bg-[#162f6b] transition-colors w-full justify-center"
+              >
+                <Navigation size={18} />
+                Locatie delen starten
+              </button>
+              {server.active && (
+                <button
+                  onClick={stopTracking}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-600 text-white font-bold font-headline text-sm hover:bg-red-700 transition-colors w-full justify-center"
+                >
+                  <StopCircle size={18} />
+                  GPS uitzetten (server)
+                </button>
+              )}
+            </div>
           ) : (
             <button
               onClick={stopTracking}
