@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ExternalLink, Check,
-  Share2, CheckCircle, ChevronRight,
+  Share2, CheckCircle, ChevronRight, X,
 } from "lucide-react";
 import DonorWall from "@/components/donations/DonorWall";
 import DonationThermometer from "@/components/donations/DonationThermometer";
@@ -256,6 +256,56 @@ function DonationForm({ tikkieUrl }: { tikkieUrl: string }) {
   );
 }
 
+function HappykidsPopup() {
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (dismissed || !visible) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center animate-[fadeInScale_0.3s_ease-out]">
+        <button
+          onClick={() => setDismissed(true)}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-outline hover:text-on-surface transition-colors"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="text-4xl mb-4">🎉</div>
+
+        <div className="mb-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo_happykids.png"
+            alt="HappyKids Kinderopvang"
+            className="h-14 mx-auto object-contain"
+          />
+        </div>
+
+        <p className="font-headline font-black text-2xl text-on-surface leading-tight mb-2">
+          Wow, <span className="text-primary-container">€1.000</span> van HappyKids!
+        </p>
+        <p className="text-sm text-on-surface-variant leading-relaxed">
+          HappyKids Kinderopvang steunt onze jongens met een geweldige bijdrage. Hartstikke bedankt! 🧡
+        </p>
+
+        <button
+          onClick={() => setDismissed(true)}
+          className="mt-6 w-full bg-primary-container text-white font-headline font-black text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all"
+        >
+          Geweldig!
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ShareButton() {
   const [copied, setCopied] = useState(false);
 
@@ -286,6 +336,8 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
 
   return (
     <div>
+      <HappykidsPopup />
+
       {/* ── THERMOMETER ─────────────────────────────────────────── */}
       <div className="mb-12">
         <DonationThermometer raised={raised} goal={goal} tikkieUrl={tikkieUrls.donatie} />
