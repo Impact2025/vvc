@@ -7,7 +7,7 @@ import {
   comments,
   checkins,
 } from "@/db/schema";
-import { eq, desc, or } from "drizzle-orm";
+import { eq, desc, asc, or } from "drizzle-orm";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import LiveScore from "@/components/home/LiveScore";
@@ -25,12 +25,10 @@ async function getData() {
     const allMatches = await db
       .select()
       .from(matches)
-      .orderBy(desc(matches.date));
+      .orderBy(asc(matches.date), asc(matches.time));
 
     const liveMatch = allMatches.find((m) => m.status === "live") ?? null;
-    const upcomingMatches = allMatches
-      .filter((m) => m.status === "upcoming")
-      .reverse();
+    const upcomingMatches = allMatches.filter((m) => m.status === "upcoming");
     const nextMatch = upcomingMatches[0] ?? null;
     const currentMatch: Match | null = liveMatch ?? nextMatch;
 

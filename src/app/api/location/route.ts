@@ -4,6 +4,8 @@ import { settings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 async function upsertSetting(key: string, value: string) {
   const [existing] = await db.select().from(settings).where(eq(settings.key, key));
   if (existing) {

@@ -13,7 +13,7 @@ import type { Match } from "@/db/schema";
 async function getData(): Promise<Match[]> {
   noStore();
   try {
-    return await db.select().from(matches).orderBy(asc(matches.date));
+    return await db.select().from(matches).orderBy(asc(matches.date), asc(matches.time));
   } catch {
     return [];
   }
