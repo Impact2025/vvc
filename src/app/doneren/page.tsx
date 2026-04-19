@@ -1,6 +1,8 @@
 import { db } from "@/db";
 import { donations, settings } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+
+export const dynamic = "force-dynamic";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import DonatieClient from "./DonatieClient";
