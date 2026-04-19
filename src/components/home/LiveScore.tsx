@@ -25,10 +25,28 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
     setMatch(initialMatch);
   }, [initialMatch]);
 
+  // Polling fallback: refresh current match every 30s
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/match/current");
+        if (!res.ok) return;
+        const data: Match | null = await res.json();
+        setMatch(data);
+      } catch {
+        // ignore
+      }
+    };
+
+    poll();
+    const id = setInterval(poll, 30000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     if (!match) return;
     const pusher = getPusherClient();
-    if (!pusher) return; // Pusher not configured yet
+    if (!pusher) return;
 
     const channel = pusher.subscribe("wedstrijden");
     channel.bind("score-update", (data: ScoreUpdate) => {
