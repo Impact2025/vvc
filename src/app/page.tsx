@@ -8,8 +8,9 @@ import {
   settings,
   comments,
   checkins,
+  blog_posts,
 } from "@/db/schema";
-import { eq, desc, asc, or } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import LiveScore from "@/components/home/LiveScore";
@@ -117,7 +118,14 @@ async function getData() {
       })
       .slice(0, 5);
 
-    return { currentMatch, raised, goal, activities };
+    const [latestPost] = await db
+      .select()
+      .from(blog_posts)
+      .where(eq(blog_posts.published, true))
+      .orderBy(desc(blog_posts.created_at))
+      .limit(1);
+
+    return { currentMatch, raised, goal, activities, latestPost: latestPost ?? null };
   } catch (err) {
     console.error("Home page data fetch error:", err);
     return {
@@ -125,12 +133,13 @@ async function getData() {
       raised: 0,
       goal: parseInt(process.env.NEXT_PUBLIC_DONATIE_DOEL ?? "150000", 10),
       activities: [],
+      latestPost: null,
     };
   }
 }
 
 export default async function HomePage() {
-  const { currentMatch, raised, goal, activities } = await getData();
+  const { currentMatch, raised, goal, activities, latestPost } = await getData();
   const tikkieUrl =
     process.env.NEXT_PUBLIC_TIKKIE_DONATIE ?? "https://tikkie.me/pay/vvcgoesuk";
 
@@ -179,6 +188,28 @@ export default async function HomePage() {
         <div className="mb-10">
           <QuickLinks />
         </div>
+
+        {/* Latest blog post */}
+        {latestPost && (
+          <div className="mb-10">
+            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3">Laatste bericht</p>
+            <a href={`/blog/${latestPost.slug}`} className="group block bg-white rounded-2xl border border-outline-variant/15 shadow-sm hover:shadow-md hover:border-primary-container/20 transition-all overflow-hidden">
+              {latestPost.cover_image && (
+                <div className="aspect-video w-full overflow-hidden">
+                  <img src={latestPost.cover_image} alt={latestPost.title} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                </div>
+              )}
+              <div className="p-5">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-outline mb-1">
+                  {new Date(latestPost.created_at!).toLocaleDateString("nl-NL", { day: "numeric", month: "long" })}
+                </p>
+                <h2 className="font-black font-headline text-on-surface text-lg group-hover:text-primary-container transition-colors">{latestPost.title}</h2>
+                {latestPost.excerpt && <p className="text-sm text-on-surface-variant mt-1 line-clamp-2">{latestPost.excerpt}</p>}
+                <span className="inline-block mt-3 text-xs font-bold text-primary-container">Lees verder →</span>
+              </div>
+            </a>
+          </div>
+        )}
 
         {/* Activity Feed */}
         <ActivityFeed activities={activities} />
