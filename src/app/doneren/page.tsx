@@ -75,7 +75,7 @@ export default async function DonerenPage() {
               <span className="text-primary-container">Londen.</span>
             </h1>
             <p className="text-white/80 text-base sm:text-lg max-w-md leading-relaxed mb-8">
-              7 jongens. 3 dagen. Jij kunt ze helpen dit te realiseren.
+              7 jongens, 1 meisje. 3 dagen. Jij kunt ze helpen dit te realiseren.
             </p>
             <a
               href="#doneren"
