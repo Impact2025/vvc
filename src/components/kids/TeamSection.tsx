@@ -36,13 +36,13 @@ const TEAM: Player[] = [
   },
   {
     name: "Sepp",
-    position: "Keeper",
+    position: "Verdediger",
     number: 1,
     photo: "/photos/players/sepp.jpg",
-    emoji: "🧤",
+    emoji: "🛡️",
     qna: [
-      { q: "Favoriete voetballer?", a: "Alisson Becker" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "De goal verdedigen!" },
+      { q: "Favoriete voetballer?", a: "Virgil van Dijk" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "De muur zijn!" },
     ],
   },
   {
@@ -58,13 +58,13 @@ const TEAM: Player[] = [
   },
   {
     name: "Deniz",
-    position: "Verdediger",
+    position: "Aanvaller",
     number: 5,
     photo: "/photos/players/deniz.jpg",
-    emoji: "🛡️",
+    emoji: "⚡",
     qna: [
-      { q: "Favoriete voetballer?", a: "Virgil van Dijk" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "Een Engelse pub zien" },
+      { q: "Favoriete voetballer?", a: "Erling Haaland" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Scoren natuurlijk!" },
     ],
   },
   {
