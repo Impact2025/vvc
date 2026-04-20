@@ -58,7 +58,7 @@ export default async function DonerenPage() {
           {/* Team photo — full bleed, focal point on faces */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/donatie-hero.jpeg"
+            src="/donatie-hero-banner.jpeg"
             alt="FC VVC Onder 10 team"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
