@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   MapPin,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/spelers", label: "Spelers", icon: Users },
   { href: "/admin/ouders", label: "Ouders", icon: UserCheck },
   { href: "/admin/locatie", label: "Live Locatie", icon: MapPin },
+  { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/instellingen", label: "Instellingen", icon: Settings },
 ];
 

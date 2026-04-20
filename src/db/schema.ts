@@ -148,6 +148,19 @@ export const push_log = pgTable("push_log", {
   sent_at: timestamp("sent_at").defaultNow(),
 });
 
+// ─── Blog Posts ──────────────────────────────────────────────────────────────
+export const blog_posts = pgTable("blog_posts", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).unique().notNull(),
+  content: text("content").notNull().default(""),
+  excerpt: text("excerpt"),
+  cover_image: text("cover_image"),
+  published: boolean("published").default(false),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
 // ─── Type Exports ─────────────────────────────────────────────────────────────
 export type Match = typeof matches.$inferSelect;
 export type NewMatch = typeof matches.$inferInsert;
@@ -182,6 +195,9 @@ export type PushLog = typeof push_log.$inferSelect;
 
 export type PushSubscription = typeof push_subscriptions.$inferSelect;
 export type NewPushSubscription = typeof push_subscriptions.$inferInsert;
+
+export type BlogPost = typeof blog_posts.$inferSelect;
+export type NewBlogPost = typeof blog_posts.$inferInsert;
 
 // ─── Default Settings for Seeding ────────────────────────────────────────────
 export const defaultSettings: { key: string; value: string }[] = [
