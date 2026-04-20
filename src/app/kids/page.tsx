@@ -8,6 +8,7 @@ import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import TopBallers from "@/components/kids/TopBallers";
 import TourAwards from "@/components/kids/TourAwards";
+import TeamSection from "@/components/kids/TeamSection";
 import type { Player, DiaryEntry } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 
@@ -73,6 +74,9 @@ export default async function KidsPage() {
             Statistieken, dagboekverslagen en avonturen van onze jongens in Londen.
           </p>
         </div>
+
+        {/* Het Team */}
+        <TeamSection />
 
         {/* Top Ballers */}
         <section className="mb-12">
