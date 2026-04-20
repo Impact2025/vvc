@@ -7,6 +7,7 @@ interface Player {
   position: string;
   number: number;
   photo: string | null;
+  photoPosition?: string;
   emoji: string;
   qna: { q: string; a: string }[];
 }
@@ -94,6 +95,7 @@ const TEAM: Player[] = [
     position: "Aanvaller",
     number: 7,
     photo: "/photos/players/emerson.jpg",
+    photoPosition: "center 25%",
     emoji: "⭐",
     qna: [
       { q: "Favoriete voetballer?", a: "Sam Kerr" },
@@ -129,7 +131,8 @@ function PlayerCard({ player }: { player: Player }) {
             <img
               src={player.photo}
               alt={player.name}
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: player.photoPosition ?? "center top" }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-primary-fixed/30">
