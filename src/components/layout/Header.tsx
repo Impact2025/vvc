@@ -45,6 +45,7 @@ const navLinks = [
   { href: "/schema", label: "Wedstrijden" },
   { href: "/fotos", label: "Foto's" },
   { href: "/kids", label: "Kids" },
+  { href: "/blog", label: "Blog" },
   { href: "/doneren", label: "Doneren" },
 ];
 
