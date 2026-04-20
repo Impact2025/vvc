@@ -43,7 +43,7 @@ async function seed() {
     .insert(schema.players)
     .values([
       { name: "Wesley",  number: 1,  goals: 0, assists: 1, position: "Keeper" },
-      { name: "Emerson", number: 2,  goals: 1, assists: 3, position: "Verdediger" },
+      { name: "Emersen", number: 2,  goals: 1, assists: 3, position: "Verdediger" },
       { name: "Alex",    number: 3,  goals: 0, assists: 2, position: "Verdediger" },
       { name: "Syb",     number: 6,  goals: 2, assists: 4, position: "Middenvelder" },
       { name: "Thomas",  number: 8,  goals: 3, assists: 2, position: "Middenvelder" },
@@ -158,9 +158,9 @@ async function seed() {
       goedgekeurd: true,
     },
     {
-      naam: "Ouder van Emerson",
+      naam: "Ouder van Emersen",
       email: "emerson.ouder@example.nl",
-      kind_naam: "Emerson",
+      kind_naam: "Emersen",
       rol: "ouder",
       toestemming_fotos: true,
       toestemming_app: true,
@@ -204,7 +204,7 @@ async function seed() {
       status: "betaald",
     },
     {
-      name: "Familie Emerson",
+      name: "Familie Emersen",
       message: "Trots op jullie allemaal! Maak er iets onvergetelijks van!",
       amount: 10000,
       type: "free",
@@ -279,8 +279,8 @@ async function seed() {
       approved: true,
     },
     {
-      author_name: "Familie Emerson",
-      message: "Emerson heeft zijn eerste assist gemaakt! Wat een assist was dat zeg!",
+      author_name: "Familie Emersen",
+      message: "Emersen heeft zijn eerste assist gemaakt! Wat een assist was dat zeg!",
       approved: true,
     },
     {
@@ -308,7 +308,7 @@ async function seed() {
   // ── Diary Entries ────────────────────────────────────────────────────────────
   console.log("📓 Dagboekentries...");
   await db.delete(schema.diary_entries);
-  // playerList: [Wesley, Emerson, Alex, Syb, Thomas, Sepp, Deniz]
+  // playerList: [Wesley, Emersen, Alex, Syb, Thomas, Sepp, Deniz]
   const wesleyId = playerList[0].id;
   const emersonId = playerList[1].id;
   const seppId = playerList[5].id;
@@ -455,7 +455,7 @@ async function seed() {
   console.log("\n✅ Seed compleet!");
   console.log("─────────────────────────────────────");
   console.log(`  👨‍👩‍👦 5 ouders`);
-  console.log(`  ⚽ 7 spelers (Wesley, Emerson, Alex, Syb, Thomas, Sepp, Deniz)`);
+  console.log(`  ⚽ 7 spelers (Wesley, Emersen, Alex, Syb, Thomas, Sepp, Deniz)`);
   console.log(`  🏆 6 wedstrijden (4 gespeeld, 2 upcoming)`);
   console.log(`  💛 8 donaties (incl. WeAreImpact zakelijk pakket)`);
   console.log(`  💬 7 reacties (6 goedgekeurd, 1 wachtrij)`);

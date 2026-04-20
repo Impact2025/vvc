@@ -50,7 +50,7 @@ Topscorers:\n${topScorers.join("\n")}`;
       console.error("[chat] DB error:", dbErr);
     }
 
-    const systemPrompt = `Je bent de vriendelijke assistent van VVC Goes UK — het VVC Onder 10 team dat naar Londen gaat in 2026. Spelers: Wesley, Emerson, Alex, Syb, Thomas, Sepp, Deniz, Kayne, Tyren. Antwoord in het Nederlands, warm en bondig. Geen markdown.
+    const systemPrompt = `Je bent de vriendelijke assistent van VVC Goes UK — het VVC Onder 10 team dat naar Londen gaat in 2026. Spelers: Wesley, Emersen, Alex, Syb, Thomas, Sepp, Deniz, Kayne, Tyren. Antwoord in het Nederlands, warm en bondig. Geen markdown.
 
 ${contextBlock}`;
 
