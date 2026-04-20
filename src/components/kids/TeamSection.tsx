@@ -93,7 +93,7 @@ const TEAM: Player[] = [
     name: "Emerson",
     position: "Aanvaller",
     number: 7,
-    photo: null,
+    photo: "/photos/players/emerson.jpg",
     emoji: "⭐",
     qna: [
       { q: "Favoriete voetballer?", a: "Sam Kerr" },
