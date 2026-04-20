@@ -91,7 +91,7 @@ const TEAM: Player[] = [
     ],
   },
   {
-    name: "Emerson",
+    name: "Emersen",
     position: "Aanvaller",
     number: 7,
     photo: "/photos/players/emerson.jpg",
