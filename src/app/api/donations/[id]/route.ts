@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { donations } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 interface RouteContext {
   params: { id: string };
@@ -34,6 +35,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       return NextResponse.json({ error: "Donation not found" }, { status: 404 });
     }
 
+    revalidatePath("/doneren");
     return NextResponse.json(updated);
   } catch (error) {
     console.error(error);

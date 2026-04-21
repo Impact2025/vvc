@@ -1,13 +1,16 @@
 import { db } from "@/db";
 import { donations, settings } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { unstable_noStore as noStore } from "next/cache";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import DonatieClient from "./DonatieClient";
 
 async function getData() {
+  noStore();
   try {
     const paidDonations = await db
       .select()
