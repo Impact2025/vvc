@@ -497,6 +497,53 @@ function SponsorForm({ tikkieUrls }: { tikkieUrls: { tourpartner: string; hoofdt
   );
 }
 
+function FlyerLightbox() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="relative rounded-xl overflow-hidden border border-outline-variant/10 group cursor-zoom-in w-full"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/sponsor-flyer.jpeg"
+          alt="Sponsorflyer FC VVC — Help ons naar Londen"
+          className="w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+            Klik om te vergroten
+          </span>
+        </div>
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setOpen(false)}
+        >
+          <div className="relative max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-lg z-10"
+            >
+              <X size={16} />
+            </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/sponsor-flyer.jpeg"
+              alt="Sponsorflyer FC VVC — Help ons naar Londen"
+              className="w-full rounded-xl shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function ShareButton() {
   const [copied, setCopied] = useState(false);
 
@@ -629,14 +676,7 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
           </div>
 
           <div className="lg:col-span-2 flex flex-col gap-5 justify-start">
-            <div className="rounded-xl overflow-hidden border border-outline-variant/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/donatie-hero-banner.jpeg"
-                alt="FC VVC team Londen"
-                className="w-full aspect-[4/3] object-cover object-top"
-              />
-            </div>
+            <FlyerLightbox />
             <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Win</p>
               <p className="font-headline font-black text-on-surface">Gesigneerd Nederlands Elftal Shirt</p>
