@@ -611,11 +611,6 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
         </div>
       </div>
 
-      {/* ── DONEURSMUUR ─────────────────────────────────────────── */}
-      <section className="mb-16">
-        <DonorWall donations={donations} />
-      </section>
-
       {/* ── SPONSORPAKKETTEN ────────────────────────────────────── */}
       <section className="mb-8" id="sponsor">
         <p className="section-label mb-2">Zakelijk & Persoonlijk Sponsorship</p>
@@ -651,6 +646,11 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ── DONEURSMUUR ─────────────────────────────────────────── */}
+      <section className="mb-8">
+        <DonorWall donations={donations} />
       </section>
 
     </div>
