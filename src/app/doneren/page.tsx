@@ -46,12 +46,14 @@ export default async function DonerenPage() {
     donatie: process.env.NEXT_PUBLIC_TIKKIE_DONATIE ?? "https://tikkie.me/pay/vvcgoesuk",
     pakket_s: process.env.NEXT_PUBLIC_TIKKIE_PAKKET_S ?? "https://tikkie.me/pay/vvcgoesuk-s",
     pakket_l: process.env.NEXT_PUBLIC_TIKKIE_PAKKET_L ?? "https://tikkie.me/pay/vvcgoesuk-l",
+    tourpartner: process.env.NEXT_PUBLIC_TIKKIE_TOURPARTNER ?? process.env.NEXT_PUBLIC_TIKKIE_DONATIE ?? "https://tikkie.me/pay/vvcgoesuk",
+    hoofdtourpartner: process.env.NEXT_PUBLIC_TIKKIE_HOOFDTOURPARTNER ?? process.env.NEXT_PUBLIC_TIKKIE_DONATIE ?? "https://tikkie.me/pay/vvcgoesuk",
   };
 
   return (
     <>
       <Header activePage="doneren" />
-      <main className="mt-20 pb-28">
+      <main className="mt-16 pb-28">
 
         {/* ── HERO ─────────────────────────────────────────────── */}
         <div className="relative overflow-hidden bg-secondary min-h-[420px] sm:min-h-[520px] flex items-center">

@@ -13,7 +13,7 @@ import type { Donation } from "@/db/schema";
 interface DonatieClientProps {
   raised: number;
   goal: number;
-  tikkieUrls: { donatie: string; pakket_s: string; pakket_l: string };
+  tikkieUrls: { donatie: string; pakket_s: string; pakket_l: string; tourpartner: string; hoofdtourpartner: string };
   donations: Donation[];
 }
 
@@ -306,6 +306,197 @@ function HappykidsPopup() {
   );
 }
 
+type SponsorTierId = "tourpartner" | "hoofdtourpartner";
+
+interface SponsorTier {
+  id: SponsorTierId;
+  label: string;
+  amount: number;
+  popular?: boolean;
+  perks: string[];
+  tikkieKey: "tourpartner" | "hoofdtourpartner";
+}
+
+const SPONSOR_TIERS: SponsorTier[] = [
+  {
+    id: "tourpartner",
+    label: "Tourpartner",
+    amount: 750,
+    tikkieKey: "tourpartner",
+    perks: [
+      "Foto met vlag — logo/familie op de teamfoto in Londen",
+      "Social exposure — vermelding op onze social media",
+      "Meedoen aan verloting gesigneerd Nederlands Elftal shirt",
+    ],
+  },
+  {
+    id: "hoofdtourpartner",
+    label: "Hoofdtourpartner",
+    amount: 1500,
+    popular: true,
+    tikkieKey: "hoofdtourpartner",
+    perks: [
+      "Foto met vlag — logo/familie op de teamfoto in Londen",
+      "Video met logo — jouw logo in onze reisvideo",
+      "Social exposure — vermelding op onze social media",
+      "Meedoen aan verloting gesigneerd Nederlands Elftal shirt",
+    ],
+  },
+];
+
+function SponsorForm({ tikkieUrls }: { tikkieUrls: { tourpartner: string; hoofdtourpartner: string } }) {
+  const [selectedTier, setSelectedTier] = useState<SponsorTierId>("hoofdtourpartner");
+  const [naam, setNaam] = useState("");
+  const [email, setEmail] = useState("");
+  const [bedrijfsnaam, setBedrijfsnaam] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const tier = SPONSOR_TIERS.find((t) => t.id === selectedTier)!;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!naam.trim()) { toast.error("Vul je naam in."); return; }
+    if (!email.trim()) { toast.error("Vul je e-mailadres in."); return; }
+
+    setLoading(true);
+    try {
+      await fetch("/api/donations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: naam.trim(),
+          email: email.trim(),
+          company_name: bedrijfsnaam.trim() || null,
+          amount: tier.amount * 100,
+          type: selectedTier,
+          tier: selectedTier,
+          status: "pending",
+        }),
+      });
+      setSuccess(true);
+      window.open(tikkieUrls[tier.tikkieKey], "_blank", "noopener,noreferrer");
+    } catch {
+      toast.error("Er ging iets mis. Probeer opnieuw.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-10 text-center">
+        <div className="w-16 h-16 rounded-full bg-green-50 border border-green-200 flex items-center justify-center">
+          <CheckCircle size={32} className="text-green-500" />
+        </div>
+        <div>
+          <p className="font-headline font-black text-xl text-on-surface">Bedankt, {naam.split(" ")[0]}!</p>
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">
+            Betaal €{tier.amount} via Tikkie om je plek als {tier.label} te bevestigen. We nemen daarna contact met je op.
+          </p>
+        </div>
+        <button
+          onClick={() => window.open(tikkieUrls[tier.tikkieKey], "_blank", "noopener,noreferrer")}
+          className="btn-primary flex items-center gap-2"
+        >
+          Open Tikkie opnieuw <ExternalLink size={14} />
+        </button>
+        <button onClick={() => setSuccess(false)} className="text-xs text-outline underline">
+          Andere aanmelding doen
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Tier selection */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {SPONSOR_TIERS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setSelectedTier(t.id)}
+            className={`relative p-4 rounded-xl border-2 text-left transition-all duration-150 ${
+              selectedTier === t.id
+                ? "border-primary-container bg-primary-fixed"
+                : "border-outline-variant/20 bg-white hover:border-outline-variant/40"
+            }`}
+          >
+            {t.popular && (
+              <span className="absolute -top-2 left-3 text-[9px] font-black uppercase tracking-widest bg-primary-container text-white px-2 py-0.5 rounded-full">
+                Meest gekozen
+              </span>
+            )}
+            <p className={`font-headline font-black text-sm mb-1 ${selectedTier === t.id ? "text-primary-container" : "text-on-surface"}`}>
+              {t.label}
+            </p>
+            <p className={`text-2xl font-black font-headline leading-none mb-3 ${selectedTier === t.id ? "text-primary-container" : "text-on-surface-variant"}`}>
+              €{t.amount}
+            </p>
+            <ul className="space-y-1">
+              {t.perks.map((p) => (
+                <li key={p} className="flex items-start gap-1.5 text-[10px] text-on-surface-variant leading-tight">
+                  <Check size={9} className="text-green-500 flex-shrink-0 mt-0.5" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="section-label block mb-1.5">Jouw naam *</label>
+          <input
+            type="text"
+            value={naam}
+            onChange={(e) => setNaam(e.target.value)}
+            placeholder="Jan de Vries"
+            required
+            className="w-full px-4 py-3 rounded-xl border border-outline-variant/30 bg-white text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-colors"
+          />
+        </div>
+        <div>
+          <label className="section-label block mb-1.5">Bedrijfsnaam</label>
+          <input
+            type="text"
+            value={bedrijfsnaam}
+            onChange={(e) => setBedrijfsnaam(e.target.value)}
+            placeholder="Optioneel"
+            className="w-full px-4 py-3 rounded-xl border border-outline-variant/30 bg-white text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-colors"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="section-label block mb-1.5">E-mailadres *</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="jouw@email.nl"
+          required
+          className="w-full px-4 py-3 rounded-xl border border-outline-variant/30 bg-white text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-colors"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading || !naam || !email}
+        className="w-full bg-primary-container text-white font-headline font-black text-sm uppercase tracking-wider py-4 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        {loading ? "Even geduld…" : <>Word {tier.label} via Tikkie <ExternalLink size={16} /></>}
+      </button>
+
+      <p className="text-center text-[11px] text-outline leading-relaxed">
+        Je wordt doorgestuurd naar Tikkie. Na betaling nemen we contact met je op voor de tegenprestaties.
+      </p>
+    </form>
+  );
+}
+
 function ShareButton() {
   const [copied, setCopied] = useState(false);
 
@@ -333,6 +524,7 @@ function ShareButton() {
 
 export default function DonatieClient({ raised, goal, tikkieUrls, donations }: DonatieClientProps) {
   const recentDonors = donations.slice(0, 3);
+  const sponsorTikkieUrls = { tourpartner: tikkieUrls.tourpartner, hoofdtourpartner: tikkieUrls.hoofdtourpartner };
 
   return (
     <div>
@@ -420,8 +612,45 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
       </div>
 
       {/* ── DONEURSMUUR ─────────────────────────────────────────── */}
-      <section className="mb-8">
+      <section className="mb-16">
         <DonorWall donations={donations} />
+      </section>
+
+      {/* ── SPONSORPAKKETTEN ────────────────────────────────────── */}
+      <section className="mb-8" id="sponsor">
+        <p className="section-label mb-2">Zakelijk & Persoonlijk Sponsorship</p>
+        <h2 className="text-2xl font-black font-headline text-on-surface mb-2">
+          Word <span className="text-primary-container">tourpartner</span>
+        </h2>
+        <p className="text-sm text-on-surface-variant mb-6 max-w-lg">
+          Steun de jongens als sponsor en krijg zichtbaarheid op de teamfoto in Londen, in onze reisvideo en op social media. Alle sponsors doen mee aan de verloting van een <strong>gesigneerd Nederlands Elftal shirt</strong>.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-3">
+            <div className="card p-6">
+              <SponsorForm tikkieUrls={sponsorTikkieUrls} />
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 flex flex-col gap-5 justify-start">
+            <div className="rounded-xl overflow-hidden border border-outline-variant/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/donatie-hero-banner.jpeg"
+                alt="FC VVC team Londen"
+                className="w-full aspect-[4/3] object-cover object-top"
+              />
+            </div>
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Win</p>
+              <p className="font-headline font-black text-on-surface">Gesigneerd Nederlands Elftal Shirt</p>
+              <p className="text-xs text-on-surface-variant mt-1">
+                Onder alle sponsors verloten we een door een internationaal voetballer gesigneerd shirt. Elk pakket doet mee.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>
