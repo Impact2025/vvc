@@ -524,19 +524,35 @@ function FlyerLightbox() {
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setOpen(false)}
         >
-          <div className="relative max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="relative max-w-lg w-full flex flex-col" style={{ height: "88vh" }} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setOpen(false)}
               className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-lg z-10"
             >
               <X size={16} />
             </button>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/sponsor-flyer.jpeg"
-              alt="Sponsorflyer FC VVC — Help ons naar Londen"
-              className="w-full rounded-xl shadow-2xl"
-            />
+            <object
+              data="/sponsor-flyer.pdf"
+              type="application/pdf"
+              className="w-full flex-1 rounded-xl shadow-2xl bg-white"
+            >
+              {/* Fallback voor iOS / browsers zonder native PDF-support */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/sponsor-flyer.jpeg"
+                alt="Sponsorflyer FC VVC — Help ons naar Londen"
+                className="w-full h-full object-contain rounded-xl"
+              />
+            </object>
+            <a
+              href="/sponsor-flyer.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 self-center text-white text-xs font-bold flex items-center gap-1 hover:underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink size={12} /> Openen / downloaden als PDF
+            </a>
           </div>
         </div>
       )}
@@ -683,6 +699,22 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
               <p className="text-xs text-on-surface-variant mt-1">
                 Onder alle sponsors verloten we een door een internationaal voetballer gesigneerd shirt. Elk pakket doet mee.
               </p>
+            </div>
+
+            <div className="p-4 bg-surface-container-low border border-outline-variant/10 rounded-xl">
+              <p className="text-xs font-black text-on-surface-variant uppercase tracking-widest mb-2">Meer info?</p>
+              <p className="text-sm font-bold text-on-surface">Dick Zeldenthuis</p>
+              <a href="tel:0653561178" className="text-sm text-primary-container font-bold hover:underline block">
+                06-535 611 78
+              </a>
+              <a
+                href="https://www.instagram.com/fcvvc.u10.londen2026"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-outline hover:text-primary-container transition-colors mt-1 block"
+              >
+                Instagram &amp; TikTok: @fcvvc.u10.londen2026
+              </a>
             </div>
           </div>
         </div>

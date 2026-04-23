@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       totaal_wedstrijden: finishedMatches.length,
     };
 
-    const prompt = `Schrijf een enthousiast weekendverslag in het Nederlands voor FC VVC U10 na een internationaal jeugdvoetbaltoernooi in Londen. Warm, energiek, voor ouders en kids.
+    const prompt = `Schrijf een enthousiast weekendverslag in het Nederlands voor FC VVC JO11-1 na een internationaal jeugdvoetbaltoernooi in Londen. Warm, energiek, voor ouders en kids.
 
 Data:
 ${JSON.stringify(reportData, null, 2)}
