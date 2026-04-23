@@ -10,8 +10,7 @@ import {
   checkins,
   blog_posts,
 } from "@/db/schema";
-import { eq, desc, asc } from "drizzle-orm";
-import { resolveCurrentMatch } from "@/lib/matchUtils";
+import { eq, desc, asc, gte, and } from "drizzle-orm";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import LiveScore from "@/components/home/LiveScore";
@@ -21,17 +20,24 @@ import ActivityFeed, { type Activity } from "@/components/home/ActivityFeed";
 import Countdown from "@/components/home/Countdown";
 import ChatBot from "@/components/home/ChatBot";
 import LiveLocationBanner from "@/components/home/LiveLocationBanner";
-import type { Match } from "@/db/schema";
-
 async function getData() {
   try {
-    // Fetch live or next upcoming match
-    const allMatches = await db
+    const today = new Date().toISOString().slice(0, 10);
+
+    const [liveMatch] = await db
       .select()
       .from(matches)
-      .orderBy(asc(matches.date), asc(matches.time));
+      .where(eq(matches.status, "live"))
+      .limit(1);
 
-    const currentMatch: Match | null = resolveCurrentMatch(allMatches);
+    const [nextMatch] = await db
+      .select()
+      .from(matches)
+      .where(and(eq(matches.status, "upcoming"), gte(matches.date, today)))
+      .orderBy(asc(matches.date), asc(matches.time))
+      .limit(1);
+
+    const currentMatch = liveMatch ?? nextMatch ?? null;
 
     // Donation settings
     const settingsRows = await db.select().from(settings);
