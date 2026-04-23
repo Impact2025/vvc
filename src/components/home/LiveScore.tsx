@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, Shield } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { getPusherClient } from "@/lib/pusher";
 import Badge from "@/components/ui/Badge";
-import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import type { Match } from "@/db/schema";
 
 interface LiveScoreProps {
@@ -25,7 +25,6 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
     setMatch(initialMatch);
   }, [initialMatch]);
 
-  // Polling fallback: refresh current match every 30s
   useEffect(() => {
     const poll = async () => {
       try {
@@ -37,7 +36,6 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
         // ignore
       }
     };
-
     poll();
     const id = setInterval(poll, 30000);
     return () => clearInterval(id);
@@ -47,23 +45,14 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
     if (!match) return;
     const pusher = getPusherClient();
     if (!pusher) return;
-
     const channel = pusher.subscribe("wedstrijden");
     channel.bind("score-update", (data: ScoreUpdate) => {
       if (data.matchId === match.id) {
         setMatch((prev) =>
-          prev
-            ? {
-                ...prev,
-                home_score: data.homeScore,
-                away_score: data.awayScore,
-                status: data.status ?? prev.status,
-              }
-            : prev
+          prev ? { ...prev, home_score: data.homeScore, away_score: data.awayScore, status: data.status ?? prev.status } : prev
         );
       }
     });
-
     return () => {
       channel.unbind_all();
       pusher.unsubscribe("wedstrijden");
@@ -71,112 +60,151 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
     };
   }, [match?.id]);
 
-  if (!match) {
+  if (!match) return null;
+
+  const isLive = match.status === "live";
+  const isFinished = match.status === "finished";
+  const homeScore = match.home_score ?? 0;
+  const awayScore = match.away_score ?? 0;
+
+  // ── Live: grote score ────────────────────────────────────────────────────
+  if (isLive) {
     return (
-      <div className="card card-hover p-6 mb-6 animate-fade-in">
-        <p className="section-label mb-4">Huidig Programma</p>
-        <div className="flex flex-col items-center justify-center py-10 text-center">
-          <Shield size={40} className="text-outline mb-3" />
-          <p className="font-headline font-bold text-on-surface">Geen live wedstrijd</p>
-          <p className="text-sm text-on-surface-variant mt-1">
-            Kom terug tijdens de London Tour voor live updates.
-          </p>
+      <div className="card mb-6 p-6 border-l-4 border-l-green-500 bg-green-50/20 animate-fade-in">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
+            <p className="section-label text-green-600">Live Nu</p>
+          </div>
+          <Badge variant="live" />
         </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary font-label mb-2">VVC</p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-secondary/10 flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-secondary">V</span>
+            </div>
+          </div>
+          <div className="text-center px-2">
+            <div className="flex items-center gap-2">
+              <span className="text-5xl font-black font-headline text-on-surface tabular-nums">{homeScore}</span>
+              <span className="text-2xl text-outline font-bold">–</span>
+              <span className="text-5xl font-black font-headline text-on-surface-variant tabular-nums">{awayScore}</span>
+            </div>
+            <p className="text-xs text-on-surface-variant mt-1">{formatDate(match.date)}</p>
+          </div>
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label mb-2 truncate">
+              {match.opponent}
+            </p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-surface-container flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-on-surface-variant">
+                {match.opponent.charAt(0)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {match.location && (
+          <div className="flex items-center justify-center gap-1.5 mt-4 pt-4 border-t border-outline-variant/10 text-xs text-on-surface-variant">
+            <MapPin size={12} />
+            {match.location}
+          </div>
+        )}
       </div>
     );
   }
 
-  const isLive = match.status === "live";
-  const isFinished = match.status === "finished";
-
-  return (
-    <div
-      className={cn(
-        "card card-hover mb-6 overflow-hidden animate-fade-in",
-        isLive && "border-l-4 border-l-primary-container shadow-sm"
-      )}
-    >
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-5">
-          <p className="section-label">
-            {isLive ? "Live Nu" : isFinished ? "Laatste Wedstrijd" : "Volgende Wedstrijd"}
-          </p>
-          {isLive ? (
-            <Badge variant="live" />
-          ) : isFinished ? (
-            <Badge
-              variant={
-                (match.home_score ?? 0) > (match.away_score ?? 0)
-                  ? "victory"
-                  : (match.home_score ?? 0) < (match.away_score ?? 0)
-                  ? "defeat"
-                  : "draw"
-              }
-            />
-          ) : (
-            <Badge variant="upcoming" />
-          )}
+  // ── Afgelopen: score tonen ───────────────────────────────────────────────
+  if (isFinished) {
+    const badge = homeScore > awayScore ? "victory" : homeScore < awayScore ? "defeat" : "draw";
+    return (
+      <div className="card card-hover mb-6 p-6 animate-fade-in">
+        <div className="flex items-center justify-between mb-4">
+          <p className="section-label">Laatste Wedstrijd</p>
+          <Badge variant={badge} />
         </div>
-
-        {/* Score Row */}
         <div className="flex items-center justify-between gap-4">
-          {/* VVC */}
-          <div className="flex flex-col items-center gap-2 flex-1">
-            <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-              <Shield size={24} className="text-secondary" />
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary font-label mb-2">VVC</p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-secondary/10 flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-secondary">V</span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-on-surface font-label">
-              VVC
-            </span>
           </div>
-
-          {/* Score */}
-          <div className="flex items-center gap-3">
-            <span
-              className={cn(
-                "text-5xl font-black font-headline tabular-nums",
-                isLive ? "text-on-surface" : "text-on-surface-variant"
-              )}
-            >
-              {match.home_score ?? 0}
-            </span>
-            <span className="text-2xl font-black font-headline text-outline">—</span>
-            <span
-              className={cn(
-                "text-5xl font-black font-headline tabular-nums",
-                isLive ? "text-primary-container" : "text-on-surface-variant"
-              )}
-            >
-              {match.away_score ?? 0}
-            </span>
-          </div>
-
-          {/* Opponent */}
-          <div className="flex flex-col items-center gap-2 flex-1">
-            <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
-              <Shield size={24} className="text-outline" />
+          <div className="text-center px-2">
+            <div className="flex items-center gap-2">
+              <span className="text-5xl font-black font-headline text-on-surface tabular-nums">{homeScore}</span>
+              <span className="text-2xl text-outline font-bold">–</span>
+              <span className="text-5xl font-black font-headline text-on-surface-variant tabular-nums">{awayScore}</span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label text-center leading-tight">
+            <p className="text-xs text-on-surface-variant mt-1">{formatDate(match.date)}</p>
+          </div>
+          <div className="text-center flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label mb-2 truncate">
               {match.opponent}
-            </span>
+            </p>
+            <div className="w-14 h-14 mx-auto rounded-xl bg-surface-container flex items-center justify-center">
+              <span className="text-2xl font-black font-headline text-on-surface-variant">
+                {match.opponent.charAt(0)}
+              </span>
+            </div>
+          </div>
+        </div>
+        {match.location && (
+          <div className="flex items-center justify-center gap-1.5 mt-4 pt-4 border-t border-outline-variant/10 text-xs text-on-surface-variant">
+            <MapPin size={12} />
+            {match.location}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Volgende wedstrijd: highlight stijl ──────────────────────────────────
+  return (
+    <div className="card card-hover mb-6 p-6 border-l-4 border-l-primary-container animate-fade-in">
+      <div className="flex items-center justify-between mb-4">
+        <p className="section-label">Volgende Wedstrijd</p>
+        <Badge variant="upcoming" />
+      </div>
+
+      <div className="flex items-center justify-between gap-4">
+        <div className="text-center flex-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-secondary font-label mb-2">VVC</p>
+          <div className="w-14 h-14 mx-auto rounded-xl bg-secondary/10 flex items-center justify-center">
+            <span className="text-2xl font-black font-headline text-secondary">V</span>
           </div>
         </div>
 
-        {/* Bottom info row */}
-        <div className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-outline-variant/10">
-          {match.location && (
-            <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">
-              <MapPin size={12} />
-              <span className="font-medium">{match.location}</span>
-            </div>
-          )}
-          {match.time && (
-            <div className="text-xs text-on-surface-variant font-medium">
-              {match.time}
-            </div>
-          )}
+        <div className="text-center px-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1 font-label">
+            {match.time ?? "TBD"}
+          </p>
+          <p className="text-2xl font-black font-headline text-primary-container italic">VS</p>
+          <p className="text-xs text-on-surface-variant mt-1 font-medium">
+            {formatDate(match.date)}
+          </p>
+        </div>
+
+        <div className="text-center flex-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label mb-2 truncate">
+            {match.opponent}
+          </p>
+          <div className="w-14 h-14 mx-auto rounded-xl bg-surface-container flex items-center justify-center">
+            <span className="text-2xl font-black font-headline text-on-surface-variant">
+              {match.opponent.charAt(0)}
+            </span>
+          </div>
         </div>
       </div>
+
+      {match.location && (
+        <div className="flex items-center justify-center gap-1.5 mt-4 pt-4 border-t border-outline-variant/10 text-xs text-on-surface-variant">
+          <MapPin size={12} />
+          {match.location}
+        </div>
+      )}
     </div>
   );
 }
