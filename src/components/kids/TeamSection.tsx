@@ -32,9 +32,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/tyren.jpg",
     emoji: "🎯",
     qna: [
-      { q: "Wie is je favoriete speler?", a: "Rodri" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "Lekker eten" },
-      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
+      { q: "Wie is je favoriete speler?", a: "Ronaldinho" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Op bed liggen in het hotel" },
+      { q: "Wat is je droom voor Londen?", a: "Dat we van een profclub winnen" },
     ],
   },
   {
