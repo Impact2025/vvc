@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { parents } from "@/db/schema";
 import { desc } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET() {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const result = await db.select().from(parents).orderBy(desc(parents.created_at));
     return NextResponse.json(result);
@@ -25,10 +28,10 @@ export async function POST(req: Request) {
     const [newParent] = await db
       .insert(parents)
       .values({
-        naam,
-        email,
-        telefoon,
-        kind_naam,
+        naam: String(naam).trim().slice(0, 100),
+        email: String(email).trim().slice(0, 200),
+        telefoon: telefoon ? String(telefoon).trim().slice(0, 30) : undefined,
+        kind_naam: String(kind_naam).trim().slice(0, 100),
         rol: rol ?? "ouder",
         goedgekeurd: false,
         kan_fotos_uploaden: false,

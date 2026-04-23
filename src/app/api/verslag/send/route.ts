@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { sendVerslagToSubscribers } from "@/lib/email";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const { html, subject } = await req.json();
 

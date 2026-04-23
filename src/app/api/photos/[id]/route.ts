@@ -3,12 +3,15 @@ import { db } from "@/db";
 import { photos } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { del } from "@vercel/blob";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 interface RouteContext {
   params: { id: string };
 }
 
 export async function PATCH(req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const body = await req.json();
@@ -37,6 +40,8 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 }
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const [deleted] = await db.delete(photos).where(eq(photos.id, id)).returning();

@@ -3,12 +3,15 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { players } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 interface RouteContext {
   params: { id: string };
 }
 
 export async function PATCH(req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const body = await req.json();
@@ -42,6 +45,8 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 }
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const [deleted] = await db.delete(players).where(eq(players.id, id)).returning();

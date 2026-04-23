@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { settings } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET() {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const result = await db.select().from(settings);
-    // Return as key-value object
     const settingsObj: Record<string, string | null> = {};
     for (const row of result) {
       settingsObj[row.key] = row.value ?? null;
@@ -19,6 +21,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const body = await req.json();
     const { key, value } = body;
@@ -27,7 +31,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "key is required" }, { status: 400 });
     }
 
-    // Upsert: try to find existing setting
     const [existing] = await db.select().from(settings).where(eq(settings.key, key));
 
     let result;
@@ -51,5 +54,4 @@ export async function POST(req: Request) {
   }
 }
 
-// Also support PUT (same as POST)
 export { POST as PUT };

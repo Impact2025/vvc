@@ -6,6 +6,9 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
+const MAX_MESSAGES = 20;
+const MAX_MESSAGE_LENGTH = 500;
+
 export async function POST(req: Request) {
   try {
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -13,9 +16,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "API key ontbreekt" }, { status: 500 });
     }
 
-    const { messages } = await req.json();
+    const body = await req.json();
+    const messages = body?.messages;
 
-    // Live context uit DB
+    if (!Array.isArray(messages)) {
+      return NextResponse.json({ error: "messages array vereist" }, { status: 400 });
+    }
+
+    if (messages.length > MAX_MESSAGES) {
+      return NextResponse.json({ error: "Te veel berichten" }, { status: 400 });
+    }
+
+    // Validate and sanitize messages
+    const safeMessages = messages
+      .filter((m) => m && typeof m.role === "string" && typeof m.content === "string")
+      .map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: String(m.content).slice(0, MAX_MESSAGE_LENGTH),
+      }));
+
     let contextBlock = "Livedata tijdelijk niet beschikbaar.";
     try {
       const [allMatches, allPlayers, settingsRows] = await Promise.all([
@@ -68,7 +87,7 @@ ${contextBlock}`;
         max_tokens: 200,
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages,
+          ...safeMessages,
         ],
       }),
     });
@@ -76,7 +95,7 @@ ${contextBlock}`;
     if (!orResponse.ok) {
       const errText = await orResponse.text();
       console.error("[chat] OpenRouter error:", orResponse.status, errText);
-      return NextResponse.json({ error: `OpenRouter ${orResponse.status}: ${errText}` }, { status: 502 });
+      return NextResponse.json({ error: "AI tijdelijk niet beschikbaar" }, { status: 502 });
     }
 
     const data = await orResponse.json();

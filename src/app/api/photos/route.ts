@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { photos } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -13,8 +14,13 @@ export async function GET(req: Request) {
 
     const conditions = [];
 
-    if (approvedParam !== null && approvedParam !== "all") {
-      conditions.push(eq(photos.approved, approvedParam === "true"));
+    // Unauthenticated callers only see approved photos
+    if (isAdmin() && approvedParam !== null && approvedParam !== "true") {
+      if (approvedParam !== "all") {
+        conditions.push(eq(photos.approved, approvedParam === "true"));
+      }
+    } else {
+      conditions.push(eq(photos.approved, true));
     }
 
     if (matchIdParam) {
@@ -36,6 +42,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const body = await req.json();
     const { url, caption, uploader_name, uploader_parent_id, match_id } = body;

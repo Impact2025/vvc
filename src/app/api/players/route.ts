@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { players } from "@/db/schema";
 import { desc } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -15,6 +16,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const body = await req.json();
     const { name, number, goals, assists, position, photo_url } = body;

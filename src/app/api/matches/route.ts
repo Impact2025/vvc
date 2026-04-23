@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { matches } from "@/db/schema";
 import { asc } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -14,6 +15,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const body = await req.json();
     const { opponent, date, time, location } = body;

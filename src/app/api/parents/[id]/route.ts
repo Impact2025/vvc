@@ -2,26 +2,22 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { parents } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 interface RouteContext {
   params: { id: string };
 }
 
 export async function PATCH(req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const body = await req.json();
     const {
-      naam,
-      email,
-      telefoon,
-      kind_naam,
-      rol,
-      goedgekeurd,
-      kan_fotos_uploaden,
-      kan_commentaar,
-      toestemming_fotos,
-      toestemming_app,
+      naam, email, telefoon, kind_naam, rol,
+      goedgekeurd, kan_fotos_uploaden, kan_commentaar,
+      toestemming_fotos, toestemming_app,
     } = body;
 
     const updateData: Partial<typeof parents.$inferInsert> = {};
@@ -54,6 +50,8 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 }
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const [deleted] = await db.delete(parents).where(eq(parents.id, id)).returning();

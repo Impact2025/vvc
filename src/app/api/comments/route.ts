@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { comments, settings } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { isAdmin } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -10,8 +11,13 @@ export async function GET(req: Request) {
 
     let query = db.select().from(comments).$dynamic();
 
-    if (approvedParam !== null && approvedParam !== "all") {
-      query = query.where(eq(comments.approved, approvedParam === "true"));
+    // Unauthenticated callers only ever see approved comments
+    if (isAdmin() && approvedParam !== null && approvedParam !== "true") {
+      if (approvedParam !== "all") {
+        query = query.where(eq(comments.approved, approvedParam === "true"));
+      }
+    } else {
+      query = query.where(eq(comments.approved, true));
     }
 
     const result = await query.orderBy(comments.created_at);
@@ -27,11 +33,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { author_name, message } = body;
 
-    if (!author_name || !message) {
+    if (!author_name || typeof author_name !== "string" || !message || typeof message !== "string") {
       return NextResponse.json({ error: "author_name and message are required" }, { status: 400 });
     }
 
-    // Check auto-approve setting
+    const safeName = author_name.trim().slice(0, 100);
+    const safeMessage = message.trim().slice(0, 1000);
+
+    if (!safeName || !safeMessage) {
+      return NextResponse.json({ error: "author_name and message are required" }, { status: 400 });
+    }
+
     const [autoApproveSetting] = await db
       .select()
       .from(settings)
@@ -41,7 +53,7 @@ export async function POST(req: Request) {
 
     const [newComment] = await db
       .insert(comments)
-      .values({ author_name, message, approved: autoApprove })
+      .values({ author_name: safeName, message: safeMessage, approved: autoApprove })
       .returning();
 
     return NextResponse.json(newComment, { status: 201 });

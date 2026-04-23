@@ -5,6 +5,7 @@ import { matches, players } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { pusherServer } from "@/lib/pusher";
 import { broadcastPush } from "@/lib/sendPush";
+import { isAdmin, isAdminOrScorekeeper, unauthorized } from "@/lib/auth";
 
 interface RouteContext {
   params: { id: string };
@@ -27,6 +28,8 @@ export async function GET(_req: Request, { params }: RouteContext) {
 }
 
 export async function PATCH(req: Request, { params }: RouteContext) {
+  if (!isAdminOrScorekeeper()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const body = await req.json();
@@ -78,7 +81,6 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       return NextResponse.json({ error: "Match not found" }, { status: 404 });
     }
 
-    // Trigger Pusher real-time update
     if (pusherServer && (home_score !== undefined || away_score !== undefined || status !== undefined)) {
       await pusherServer.trigger("wedstrijden", "score-update", {
         matchId: id,
@@ -89,7 +91,6 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       });
     }
 
-    // Push notifications voor grote events
     if (status === "live") {
       broadcastPush({
         title: "Wedstrijd begonnen! ⚽",
@@ -120,6 +121,8 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 }
 
 export async function DELETE(_req: Request, { params }: RouteContext) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const id = parseInt(params.id);
     const [deleted] = await db.delete(matches).where(eq(matches.id, id)).returning();

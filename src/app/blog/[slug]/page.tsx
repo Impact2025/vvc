@@ -6,6 +6,18 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import type { Metadata } from "next";
+import sanitizeHtml from "sanitize-html";
+
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "figure", "figcaption"]),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    img: ["src", "alt", "width", "height", "loading"],
+    a: ["href", "target", "rel"],
+    "*": ["class"],
+  },
+  allowedSchemes: ["https", "http", "mailto"],
+};
 
 interface Props { params: { slug: string } }
 
@@ -67,7 +79,7 @@ export default async function BlogPostPage({ params }: Props) {
             prose-img:rounded-xl prose-img:shadow-sm
             prose-blockquote:border-primary-container/40 prose-blockquote:text-on-surface-variant
             prose-strong:text-on-surface"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content, SANITIZE_OPTIONS) }}
         />
       </main>
       <BottomNav />

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { blog_posts } from "@/db/schema";
 import { desc } from "drizzle-orm";
+import { isAdmin, unauthorized } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -24,6 +25,8 @@ function generateSlug(title: string): string {
 }
 
 export async function POST(req: Request) {
+  if (!isAdmin()) return unauthorized();
+
   try {
     const { title, content, excerpt, cover_image, published } = await req.json();
     if (!title) return NextResponse.json({ error: "Title required" }, { status: 400 });

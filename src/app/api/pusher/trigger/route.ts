@@ -1,8 +1,11 @@
 import { pusherServer } from "@/lib/pusher";
 import { broadcastPush } from "@/lib/sendPush";
 import { NextResponse } from "next/server";
+import { isAdminOrScorekeeper, unauthorized } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  if (!isAdminOrScorekeeper()) return unauthorized();
+
   try {
     const { channel, event, data } = await req.json();
 
