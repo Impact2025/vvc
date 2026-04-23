@@ -5,9 +5,9 @@ import { eq, and, isNotNull, ne } from "drizzle-orm";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = process.env.RESEND_FROM ?? "VVC Goes UK <onboarding@resend.dev>";
+const FROM = process.env.RESEND_FROM ?? "VVC Goes UK <noreply@vvcgoesuk.nl>";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "chat@weareimpact.nl";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://vvc-ashen.vercel.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://vvcgoesuk.nl";
 
 // ── Tikkie URL per tier ──────────────────────────────────────────
 function getTikkieUrl(tier: string | null | undefined): string {
@@ -53,6 +53,7 @@ function layout(body: string): string {
     <a href="https://www.instagram.com/fcvvc.u10.londen2026" style="color:#E8723A;text-decoration:none;">@fcvvc.u10.londen2026</a>
     &nbsp;&middot;&nbsp;
     <a href="${APP_URL}/doneren" style="color:#E8723A;text-decoration:none;">vvcgoesuk.nl</a><br>
+    <a href="${APP_URL}/doneren" style="color:#aaa;text-decoration:none;font-size:11px;">Uitschrijven</a><br>
     Meer info: Dick Zeldenthuis &mdash; 06-535 611 78
   </div>
 
