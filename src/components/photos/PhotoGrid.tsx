@@ -102,7 +102,7 @@ export default function PhotoGrid({ photos, matchTitle }: PhotoGridProps) {
               src={current.url}
               alt={current.caption ?? "VVC foto"}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="100vw"
               priority
             />
