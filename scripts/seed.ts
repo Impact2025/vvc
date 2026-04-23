@@ -135,10 +135,10 @@ async function seed() {
   await db.delete(schema.parents);
   await db.insert(schema.parents).values([
     {
-      naam: "Vincent van Munster",
+      naam: "Ouder van Alex",
       email: "chat@weareimpact.nl",
       telefoon: "06-44556677",
-      kind_naam: "Deniz",
+      kind_naam: "Alex",
       rol: "begeleider",
       toestemming_fotos: true,
       toestemming_app: true,
@@ -405,7 +405,7 @@ async function seed() {
     {
       url: "/photos/dropjes-stand.jpeg",
       caption: "De Londen Dropjes staan klaar! Onze speler verkoopt ze trots voor de London Tour. Met Tikkie QR code erbij 🍬🧡",
-      uploader_name: "Vincent van Munster",
+      uploader_name: "Ouder van Alex",
       approved: true,
     },
     {
@@ -417,7 +417,7 @@ async function seed() {
     {
       url: "/photos/dropjes-tafel.jpeg",
       caption: "Volle bakken Londen Dropjes klaar voor de verkoop bij FC VVC Business Club 📦",
-      uploader_name: "Vincent van Munster",
+      uploader_name: "Ouder van Alex",
       approved: true,
     },
     {
