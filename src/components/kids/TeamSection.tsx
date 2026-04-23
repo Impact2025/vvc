@@ -20,8 +20,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/wesley.jpg",
     emoji: "⚡",
     qna: [
-      { q: "Favoriete voetballer?", a: "Erling Haaland" },
+      { q: "Wie is je favoriete speler?", a: "Erling Haaland" },
       { q: "Wat ga je als eerste doen in Londen?", a: "De Big Ben zien!" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
   {
@@ -31,8 +32,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/tyren.jpg",
     emoji: "🎯",
     qna: [
-      { q: "Favoriete voetballer?", a: "Rodri" },
+      { q: "Wie is je favoriete speler?", a: "Rodri" },
       { q: "Wat ga je als eerste doen in Londen?", a: "Lekker eten" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
   {
@@ -42,8 +44,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/sepp.jpg",
     emoji: "🛡️",
     qna: [
-      { q: "Favoriete voetballer?", a: "Virgil van Dijk" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "De muur zijn!" },
+      { q: "Wie is je favoriete speler?", a: "Virgil van Dijk" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Voetballen ⚽️" },
+      { q: "Wat is je droom voor Londen?", a: "Dat Sabri ook meekan en dat we iig 1 wedstrijd winnen" },
     ],
   },
   {
@@ -53,8 +56,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/kayne.jpg",
     emoji: "🧤",
     qna: [
-      { q: "Favoriete voetballer?", a: "Manuel Neuer" },
+      { q: "Wie is je favoriete speler?", a: "Manuel Neuer" },
       { q: "Wat ga je als eerste doen in Londen?", a: "Voetballen uiteraard" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
   {
@@ -64,8 +68,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/deniz.jpg",
     emoji: "⚡",
     qna: [
-      { q: "Favoriete voetballer?", a: "Erling Haaland" },
+      { q: "Wie is je favoriete speler?", a: "Erling Haaland" },
       { q: "Wat ga je als eerste doen in Londen?", a: "Scoren natuurlijk!" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
   {
@@ -75,8 +80,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/syb.jpg",
     emoji: "🚀",
     qna: [
-      { q: "Favoriete voetballer?", a: "Kylian Mbappé" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "Rennen door de stad" },
+      { q: "Wie is je favoriete speler?", a: "Frenkie de Jong" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Met mijn teamgenoten de Champions League finale kijken in een Engelse pub!" },
+      { q: "Wat is je droom voor Londen?", a: "Een paar super wedstrijden spelen tegen topclubs en stiekem wat puntjes pakken 😉" },
     ],
   },
   {
@@ -86,8 +92,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/alex.jpg",
     emoji: "🎮",
     qna: [
-      { q: "Favoriete voetballer?", a: "Kevin De Bruyne" },
+      { q: "Wie is je favoriete speler?", a: "Kevin De Bruyne" },
       { q: "Wat ga je als eerste doen in Londen?", a: "Wembley bezoeken" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
   {
@@ -98,8 +105,9 @@ const TEAM: Player[] = [
     photoPosition: "center 25%",
     emoji: "⭐",
     qna: [
-      { q: "Favoriete voetballer?", a: "Sam Kerr" },
+      { q: "Wie is je favoriete speler?", a: "Sam Kerr" },
       { q: "Wat ga je als eerste doen in Londen?", a: "Shoppen!" },
+      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
     ],
   },
 ];
