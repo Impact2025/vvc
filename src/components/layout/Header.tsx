@@ -159,12 +159,18 @@ export default function Header({ activePage }: HeaderProps) {
           </button>
           {parent ? (
             <div className="flex items-center gap-2">
-              <span className="hidden sm:block text-xs font-semibold text-on-surface-variant">
-                {parent.naam.split(" ")[0]}
-              </span>
-              <div className="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary-container text-sm font-black font-headline">
-                {parent.naam.charAt(0)}
-              </div>
+              <Link
+                href="/mijn"
+                className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-surface-container transition-colors"
+                title="Mijn dashboard"
+              >
+                <span className="hidden sm:block text-xs font-semibold text-on-surface-variant">
+                  {parent.naam.split(" ")[0]}
+                </span>
+                <div className="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary-container text-sm font-black font-headline">
+                  {parent.naam.charAt(0)}
+                </div>
+              </Link>
               <button
                 onClick={logout}
                 className="w-9 h-9 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
