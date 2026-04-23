@@ -43,7 +43,12 @@ export async function POST(req: Request) {
     }
 
     const cookieValue = await signParentCookie(parent.id);
-    const response = NextResponse.json({ ok: true, naam: parent.naam, kind_naam: parent.kind_naam });
+    const response = NextResponse.json({
+      ok: true,
+      naam: parent.naam,
+      kind_naam: parent.kind_naam,
+      must_change_pin: parent.pincode_is_tijdelijk ?? false,
+    });
     response.cookies.set("vvc_parent_session", cookieValue, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

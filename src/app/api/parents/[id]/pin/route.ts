@@ -25,7 +25,7 @@ export async function POST(req: Request, { params }: RouteContext) {
   const hashed = await hashPin(String(pin));
   const [updated] = await db
     .update(parents)
-    .set({ pincode: hashed })
+    .set({ pincode: hashed, pincode_is_tijdelijk: true })
     .where(eq(parents.id, id))
     .returning({ id: parents.id });
 

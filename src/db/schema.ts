@@ -120,6 +120,7 @@ export const parents = pgTable("parents", {
   invite_token: varchar("invite_token", { length: 255 }),
   token_expires_at: timestamp("token_expires_at"),
   pincode: varchar("pincode", { length: 64 }),
+  pincode_is_tijdelijk: boolean("pincode_is_tijdelijk").default(false),
   created_at: timestamp("created_at").defaultNow(),
 });
 

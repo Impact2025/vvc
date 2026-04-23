@@ -1,73 +1,99 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-interface Parent {
-  id: number;
-  naam: string;
-  kind_naam: string | null;
-}
+type Step = "kies" | "bevestig" | "opgeslagen";
 
-function Initials({ naam }: { naam: string }) {
-  const parts = naam.trim().split(" ");
-  const init = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].slice(0, 2);
-  return <span className="text-xl font-bold text-white">{init.toUpperCase()}</span>;
-}
-
-export default function InloggenPage() {
+export default function PincodeInstellenPage() {
   const router = useRouter();
-  const [parents, setParents] = useState<Parent[]>([]);
-  const [selected, setSelected] = useState<Parent | null>(null);
+  const [step, setStep] = useState<Step>("kies");
   const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/ouders/login")
-      .then((r) => r.ok ? r.json() : [])
-      .then(setParents)
-      .catch(() => setParents([]));
-  }, []);
-
-  const handleDigit = (d: string) => {
-    if (pin.length >= 4) return;
-    const next = pin + d;
-    setPin(next);
-    setError("");
-    if (next.length === 4) submitPin(next);
+  const triggerShake = () => {
+    setShake(true);
+    setTimeout(() => setShake(false), 500);
   };
 
-  const handleBackspace = () => setPin((p) => p.slice(0, -1));
+  const handleDigit = (d: string) => {
+    setError("");
+    if (step === "kies") {
+      if (pin.length >= 4) return;
+      const next = pin + d;
+      setPin(next);
+      if (next.length === 4) {
+        if (next === "1234") {
+          setError("Kies een andere pincode dan 1234");
+          triggerShake();
+          setTimeout(() => setPin(""), 600);
+          return;
+        }
+        setTimeout(() => setStep("bevestig"), 200);
+      }
+    } else if (step === "bevestig") {
+      if (confirmPin.length >= 4) return;
+      const next = confirmPin + d;
+      setConfirmPin(next);
+      if (next.length === 4) {
+        if (next !== pin) {
+          setError("Pincodes komen niet overeen, probeer opnieuw");
+          triggerShake();
+          setTimeout(() => {
+            setConfirmPin("");
+            setError("");
+          }, 600);
+        } else {
+          submitPin(next);
+        }
+      }
+    }
+  };
+
+  const handleBackspace = () => {
+    setError("");
+    if (step === "kies") setPin((p) => p.slice(0, -1));
+    else if (step === "bevestig") setConfirmPin((p) => p.slice(0, -1));
+  };
+
+  const handleBackToKies = () => {
+    setStep("kies");
+    setPin("");
+    setConfirmPin("");
+    setError("");
+  };
 
   const submitPin = async (code: string) => {
-    if (!selected) return;
     setLoading(true);
-    const res = await fetch("/api/ouders/login", {
-      method: "POST",
+    const res = await fetch("/api/ouders/mijn-pin", {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ parent_id: selected.id, pin: code }),
+      body: JSON.stringify({ pin: code }),
     });
     setLoading(false);
     if (res.ok) {
-      const data = await res.json().catch(() => ({}));
-      router.push(data.must_change_pin ? "/pincode-instellen" : "/mijn");
-      router.refresh();
+      setStep("opgeslagen");
+      setTimeout(() => {
+        router.push("/mijn");
+        router.refresh();
+      }, 1500);
     } else {
       const data = await res.json().catch(() => ({}));
-      setPin("");
-      setError(data.error ?? "Verkeerde pincode, probeer opnieuw.");
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
+      setError(data.error ?? "Er ging iets mis, probeer opnieuw");
+      triggerShake();
+      setConfirmPin("");
     }
   };
+
+  const activeDots = step === "kies" ? pin : confirmPin;
 
   return (
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-10">
           <Image
             src="/logo.png"
@@ -77,58 +103,38 @@ export default function InloggenPage() {
             className="h-16 w-auto object-contain mb-4"
             priority
           />
-          <p className="text-sm text-on-surface-variant">Kies je naam en voer je pincode in</p>
+          <h1 className="text-lg font-semibold text-on-surface mb-1">Kies je eigen pincode</h1>
+          <p className="text-sm text-on-surface-variant text-center">
+            {step === "kies" && "Kies een pincode van 4 cijfers"}
+            {step === "bevestig" && "Voer je nieuwe pincode nogmaals in"}
+            {step === "opgeslagen" && "Pincode opgeslagen!"}
+          </p>
         </div>
 
-        {!selected ? (
-          /* Stap 1: kies naam */
-          <div className="space-y-3">
-            {parents.length === 0 && (
-              <p className="text-center text-sm text-on-surface-variant">Laden...</p>
-            )}
-            {parents.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setSelected(p)}
-                className="w-full flex items-center gap-4 bg-white border border-outline-variant/15 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md hover:border-primary-container/40 transition-all text-left"
-              >
-                <div className="w-11 h-11 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-                  <Initials naam={p.naam} />
-                </div>
-                <div>
-                  <p className="font-semibold text-on-surface">{p.naam}</p>
-                  {p.kind_naam && (
-                    <p className="text-xs text-on-surface-variant">Ouder van {p.kind_naam}</p>
-                  )}
-                </div>
-              </button>
-            ))}
+        {step === "opgeslagen" ? (
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center text-2xl">
+              ✓
+            </div>
+            <p className="text-sm text-on-surface-variant">Je wordt doorgestuurd…</p>
           </div>
         ) : (
-          /* Stap 2: PIN invoeren */
           <div className="flex flex-col items-center">
-            <button
-              onClick={() => { setSelected(null); setPin(""); setError(""); }}
-              className="self-start mb-6 flex items-center gap-1 text-sm text-on-surface-variant hover:text-on-surface"
-            >
-              ← Terug
-            </button>
-
-            <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center mb-3">
-              <Initials naam={selected.naam} />
-            </div>
-            <p className="font-semibold text-on-surface mb-1">{selected.naam}</p>
-            {selected.kind_naam && (
-              <p className="text-xs text-on-surface-variant mb-6">Ouder van {selected.kind_naam}</p>
+            {step === "bevestig" && (
+              <button
+                onClick={handleBackToKies}
+                className="self-start mb-6 flex items-center gap-1 text-sm text-on-surface-variant hover:text-on-surface"
+              >
+                ← Andere pincode kiezen
+              </button>
             )}
 
-            {/* PIN dots */}
             <div className={`flex gap-4 mb-2 transition-transform ${shake ? "animate-shake" : ""}`}>
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
                   className={`w-4 h-4 rounded-full border-2 transition-colors ${
-                    i < pin.length
+                    i < activeDots.length
                       ? "bg-primary-container border-primary-container"
                       : "border-outline-variant/40 bg-transparent"
                   }`}
@@ -139,7 +145,6 @@ export default function InloggenPage() {
             {error && <p className="text-xs text-red-500 mb-4 text-center">{error}</p>}
             {!error && <div className="mb-4" />}
 
-            {/* PIN pad */}
             <div className="grid grid-cols-3 gap-3 w-full max-w-[260px]">
               {["1","2","3","4","5","6","7","8","9"].map((d) => (
                 <button
@@ -161,7 +166,7 @@ export default function InloggenPage() {
               </button>
               <button
                 onClick={handleBackspace}
-                disabled={loading || pin.length === 0}
+                disabled={loading || activeDots.length === 0}
                 className="aspect-square rounded-2xl bg-white border border-outline-variant/15 shadow-sm text-xl text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all disabled:opacity-30"
               >
                 ⌫
