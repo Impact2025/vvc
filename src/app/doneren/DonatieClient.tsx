@@ -306,7 +306,7 @@ function HappykidsPopup() {
   );
 }
 
-type SponsorTierId = "tourpartner" | "hoofdtourpartner";
+type SponsorTierId = "basissponsor" | "tourpartner" | "hoofdtourpartner";
 
 interface SponsorTier {
   id: SponsorTierId;
@@ -314,10 +314,20 @@ interface SponsorTier {
   amount: number;
   popular?: boolean;
   perks: string[];
-  tikkieKey: "tourpartner" | "hoofdtourpartner";
+  tikkieKey: "basissponsor" | "tourpartner" | "hoofdtourpartner";
 }
 
 const SPONSOR_TIERS: SponsorTier[] = [
+  {
+    id: "basissponsor",
+    label: "Sponsor",
+    amount: 250,
+    tikkieKey: "basissponsor",
+    perks: [
+      "Foto met vlag — logo/familie op de teamfoto in Londen",
+      "Social exposure — vermelding op onze social media",
+    ],
+  },
   {
     id: "tourpartner",
     label: "Tourpartner",
@@ -344,8 +354,8 @@ const SPONSOR_TIERS: SponsorTier[] = [
   },
 ];
 
-function SponsorForm({ tikkieUrls }: { tikkieUrls: { tourpartner: string; hoofdtourpartner: string } }) {
-  const [selectedTier, setSelectedTier] = useState<SponsorTierId>("hoofdtourpartner");
+function SponsorForm({ tikkieUrls }: { tikkieUrls: { basissponsor: string; tourpartner: string; hoofdtourpartner: string } }) {
+  const [selectedTier, setSelectedTier] = useState<SponsorTierId>("tourpartner");
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
   const [bedrijfsnaam, setBedrijfsnaam] = useState("");
@@ -411,7 +421,7 @@ function SponsorForm({ tikkieUrls }: { tikkieUrls: { tourpartner: string; hoofdt
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Tier selection */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {SPONSOR_TIERS.map((t) => (
           <button
             key={t.id}
@@ -588,7 +598,7 @@ function ShareButton() {
 
 export default function DonatieClient({ raised, goal, tikkieUrls, donations }: DonatieClientProps) {
   const recentDonors = donations.slice(0, 3);
-  const sponsorTikkieUrls = { tourpartner: tikkieUrls.tourpartner, hoofdtourpartner: tikkieUrls.hoofdtourpartner };
+  const sponsorTikkieUrls = { basissponsor: tikkieUrls.pakket_s, tourpartner: tikkieUrls.tourpartner, hoofdtourpartner: tikkieUrls.hoofdtourpartner };
 
   return (
     <div>
@@ -682,7 +692,7 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
           Word <span className="text-primary-container">tourpartner</span>
         </h2>
         <p className="text-sm text-on-surface-variant mb-6 max-w-lg">
-          Steun de jongens als sponsor en krijg zichtbaarheid op de teamfoto in Londen, in onze reisvideo en op social media. Alle sponsors doen mee aan de verloting van een <strong>gesigneerd Nederlands Elftal shirt</strong>.
+          Steun de jongens als sponsor vanaf €250 en krijg zichtbaarheid op de teamfoto in Londen en op social media. Sponsors vanaf <strong>€750</strong> doen mee aan de verloting van een <strong>gesigneerd Nederlands Elftal shirt</strong>.
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -698,7 +708,7 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
               <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Win</p>
               <p className="font-headline font-black text-on-surface">Gesigneerd Nederlands Elftal Shirt</p>
               <p className="text-xs text-on-surface-variant mt-1">
-                Onder alle sponsors verloten we een door een internationaal voetballer gesigneerd shirt. Elk pakket doet mee.
+                Onder alle sponsors van <strong>€750 of meer</strong> verloten we een door een internationaal voetballer gesigneerd shirt.
               </p>
             </div>
 
