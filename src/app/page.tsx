@@ -11,6 +11,7 @@ import {
   blog_posts,
 } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
+import { resolveCurrentMatch } from "@/lib/matchUtils";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import LiveScore from "@/components/home/LiveScore";
@@ -30,10 +31,7 @@ async function getData() {
       .from(matches)
       .orderBy(asc(matches.date), asc(matches.time));
 
-    const liveMatch = allMatches.find((m) => m.status === "live") ?? null;
-    const upcomingMatches = allMatches.filter((m) => m.status === "upcoming");
-    const nextMatch = upcomingMatches[0] ?? null;
-    const currentMatch: Match | null = liveMatch ?? nextMatch;
+    const currentMatch: Match | null = resolveCurrentMatch(allMatches);
 
     // Donation settings
     const settingsRows = await db.select().from(settings);
