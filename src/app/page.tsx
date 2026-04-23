@@ -38,7 +38,13 @@ async function getData() {
     const settingsMap = Object.fromEntries(
       settingsRows.map((s) => [s.key, s.value ?? "0"])
     );
-    const raised = parseInt(settingsMap["donatie_raised"] ?? "0", 10);
+    const allPaidDonations = await db
+      .select()
+      .from(donations)
+      .where(eq(donations.status, "betaald"));
+    const manualRaised = parseInt(settingsMap["donatie_raised"] ?? "0", 10);
+    const dbRaised = allPaidDonations.reduce((sum, d) => sum + (d.amount ?? 0), 0);
+    const raised = manualRaised + dbRaised;
     const goal = parseInt(
       settingsMap["donatie_goal"] ??
         (process.env.NEXT_PUBLIC_DONATIE_DOEL || "150000"),
