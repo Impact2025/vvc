@@ -20,9 +20,9 @@ const TEAM: Player[] = [
     photo: "/photos/players/wesley.jpg",
     emoji: "⚡",
     qna: [
-      { q: "Wie is je favoriete speler?", a: "Erling Haaland" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "De Big Ben zien!" },
-      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
+      { q: "Wie is je favoriete speler?", a: "Lamine Yamal" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Meteen een balletje trappen" },
+      { q: "Wat is je droom voor Londen?", a: "Het toernooi winnen" },
     ],
   },
   {
@@ -105,9 +105,9 @@ const TEAM: Player[] = [
     photoPosition: "center 25%",
     emoji: "⭐",
     qna: [
-      { q: "Wie is je favoriete speler?", a: "Sam Kerr" },
-      { q: "Wat ga je als eerste doen in Londen?", a: "Shoppen!" },
-      { q: "Wat is je droom voor Londen?", a: "Komt binnenkort... 🤫" },
+      { q: "Wie is je favoriete speler?", a: "Messi" },
+      { q: "Wat ga je als eerste doen in Londen?", a: "Naar mijn kamer om op mijn bed te springen" },
+      { q: "Wat is je droom voor Londen?", a: "Gescout worden door een professionele club" },
     ],
   },
 ];
