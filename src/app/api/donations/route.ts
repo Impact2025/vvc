@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { donations } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { sendDonationConfirmation, sendSponsorConfirmation, sendAdminNewSponsor } from "@/lib/email";
+
+const SPONSOR_TIERS = new Set(["basissponsor", "tourpartner", "hoofdtourpartner"]);
 
 export async function GET(req: Request) {
   try {
@@ -59,6 +62,24 @@ export async function POST(req: Request) {
         email,
       })
       .returning();
+
+    // Fire-and-forget emails — nooit de API-response blokkeren
+    const recipientEmail = email ?? company_email;
+    if (recipientEmail && tier) {
+      if (SPONSOR_TIERS.has(tier)) {
+        void sendSponsorConfirmation({
+          name, email: recipientEmail, amountCents: amount ?? 0, tier, companyName: company_name,
+        }).catch(err => console.error("[email] sponsor confirmation:", err));
+
+        void sendAdminNewSponsor({
+          name, email: recipientEmail, amountCents: amount ?? 0, tier, companyName: company_name,
+        }).catch(err => console.error("[email] admin notification:", err));
+      } else {
+        void sendDonationConfirmation({
+          name, email: recipientEmail, amountCents: amount ?? 0, tier,
+        }).catch(err => console.error("[email] donation confirmation:", err));
+      }
+    }
 
     return NextResponse.json(newDonation, { status: 201 });
   } catch (error) {

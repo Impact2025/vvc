@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { parents } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
+import { sendParentInvite } from "@/lib/email";
 
 interface RouteContext {
   params: { id: string };
@@ -33,6 +34,14 @@ export async function POST(req: Request, { params }: RouteContext) {
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     const inviteUrl = `${baseUrl}/invite/${token}`;
+
+    void sendParentInvite({
+      naam: parent.naam,
+      email: parent.email,
+      kindNaam: parent.kind_naam,
+      inviteUrl,
+      expiresAt,
+    }).catch(err => console.error("[email] parent invite:", err));
 
     return NextResponse.json({ token, url: inviteUrl, expires_at: expiresAt, parent: updated });
   } catch (error) {
