@@ -16,7 +16,7 @@ const TEAM: Player[] = [
   {
     name: "Wesley",
     position: "Aanvaller",
-    number: 9,
+    number: 10,
     photo: "/photos/players/wesley.jpg",
     emoji: "⚡",
     qna: [
@@ -28,7 +28,7 @@ const TEAM: Player[] = [
   {
     name: "Tyren",
     position: "Middenvelder",
-    number: 8,
+    number: 3,
     photo: "/photos/players/tyren.jpg",
     emoji: "🎯",
     qna: [
@@ -40,7 +40,7 @@ const TEAM: Player[] = [
   {
     name: "Sepp",
     position: "Verdediger",
-    number: 1,
+    number: 4,
     photo: "/photos/players/sepp.jpg",
     emoji: "🛡️",
     qna: [
@@ -52,7 +52,7 @@ const TEAM: Player[] = [
   {
     name: "Kayne",
     position: "Keeper",
-    number: 12,
+    number: 1,
     photo: "/photos/players/kayne.jpg",
     emoji: "🧤",
     qna: [
@@ -64,7 +64,7 @@ const TEAM: Player[] = [
   {
     name: "Deniz",
     position: "Aanvaller",
-    number: 5,
+    number: 6,
     photo: "/photos/players/deniz.jpg",
     emoji: "⚡",
     qna: [
@@ -76,7 +76,7 @@ const TEAM: Player[] = [
   {
     name: "Syb",
     position: "Aanvaller",
-    number: 11,
+    number: 6,
     photo: "/photos/players/syb.jpg",
     emoji: "🚀",
     qna: [
@@ -88,7 +88,7 @@ const TEAM: Player[] = [
   {
     name: "Alex",
     position: "Middenvelder",
-    number: 6,
+    number: 7,
     photo: "/photos/players/alex.jpg",
     emoji: "🎮",
     qna: [
@@ -100,7 +100,7 @@ const TEAM: Player[] = [
   {
     name: "Emersen",
     position: "Aanvaller",
-    number: 7,
+    number: 8,
     photo: "/photos/players/emerson.jpg",
     photoPosition: "center 25%",
     emoji: "⭐",
