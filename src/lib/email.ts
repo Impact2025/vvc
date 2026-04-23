@@ -3,7 +3,9 @@ import { db } from "@/db";
 import { donations } from "@/db/schema";
 import { eq, and, isNotNull, ne } from "drizzle-orm";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 const FROM = process.env.RESEND_FROM ?? "VVC Goes UK <noreply@vvcgoesuk.nl>";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "chat@weareimpact.nl";
@@ -90,7 +92,7 @@ export async function sendDonationConfirmation({
   const tikkieUrl = getTikkieUrl(tier);
   const voornaam = name.split(" ")[0];
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: email,
     subject: `Bedankt, ${voornaam}! Je donatie van €${euros} is ontvangen 🧡`,
@@ -123,7 +125,7 @@ export async function sendSponsorConfirmation({
   const voornaam = name.split(" ")[0];
   const displayName = companyName ?? name;
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: email,
     subject: `Welkom als ${info.label} van VVC Goes UK! 🏆`,
@@ -153,7 +155,7 @@ export async function sendAdminNewSponsor({
   const info = TIERS[tier] ?? { label: tier };
   const euros = (amountCents / 100).toFixed(0);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: ADMIN_EMAIL,
     subject: `Nieuwe sponsor: ${companyName ?? name} — €${euros} (${info.label})`,
@@ -181,7 +183,7 @@ export async function sendParentInvite({
   const expiry = expiresAt.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
   const voornaam = naam.split(" ")[0];
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: email,
     subject: `Jouw toegang tot de VVC Goes UK app${kindNaam ? ` — ${kindNaam}` : ""}`,
@@ -230,7 +232,7 @@ export async function sendVerslagToSubscribers(verslagHtml: string, subject: str
 
   for (const sub of unique) {
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: FROM,
         to: sub.email!,
         subject,
