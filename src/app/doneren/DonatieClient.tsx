@@ -504,13 +504,14 @@ function FlyerLightbox() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="relative rounded-xl overflow-hidden border border-outline-variant/10 group cursor-zoom-in w-full"
+        className="relative rounded-xl overflow-hidden border border-outline-variant/10 group cursor-zoom-in w-full bg-gray-100"
+        style={{ aspectRatio: "3/4" }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/sponsor-flyer.jpeg"
-          alt="Sponsorflyer FC VVC — Help ons naar Londen"
-          className="w-full object-cover"
+        <iframe
+          src="/sponsor-flyer.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"
+          className="w-full h-full border-0 pointer-events-none"
+          title="Sponsorflyer preview"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
           <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full">
