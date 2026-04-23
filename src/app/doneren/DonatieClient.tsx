@@ -604,6 +604,31 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
     <div>
       <HappykidsPopup />
 
+      {/* ── ZAKELIJKE SPONSOR CTA ───────────────────────────────── */}
+      <div className="mb-8 rounded-2xl bg-secondary overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 py-5">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-xl">🏢</span>
+            </div>
+            <div>
+              <p className="text-white font-headline font-black text-base leading-tight">
+                Zakelijk sponsoren?
+              </p>
+              <p className="text-white/70 text-xs mt-0.5 max-w-sm">
+                Sponsor-pakketten van €250 tot €1.500 — logo op teamfoto in Londen, social exposure en kans op een gesigneerd Oranje-shirt.
+              </p>
+            </div>
+          </div>
+          <a
+            href="#sponsor"
+            className="flex-shrink-0 inline-flex items-center gap-2 bg-primary-container text-white font-headline font-black text-sm uppercase tracking-wider px-5 py-3 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all whitespace-nowrap"
+          >
+            Bekijk pakketten <ChevronRight size={15} />
+          </a>
+        </div>
+      </div>
+
       {/* ── THERMOMETER ─────────────────────────────────────────── */}
       <div className="mb-12">
         <DonationThermometer raised={raised} goal={goal} tikkieUrl={tikkieUrls.donatie} />
