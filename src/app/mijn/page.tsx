@@ -9,6 +9,7 @@ import MijnDashboard from "./MijnDashboard";
 export default async function MijnPage() {
   const parent = await getParentSession();
   if (!parent) redirect("/inloggen");
+  if (parent.pincode_is_tijdelijk) redirect("/pincode-instellen");
 
   const allMatches = await db
     .select({ id: matches.id, opponent: matches.opponent })
