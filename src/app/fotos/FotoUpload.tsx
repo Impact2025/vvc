@@ -4,12 +4,10 @@ import { useState } from "react";
 import { Upload, X, CheckCircle } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 
-// Resize + convert naar JPEG als de foto groter is dan 2000px of 4 MB
+// Altijd verkleinen naar max 1920px en converteren naar JPEG — bespaart 80-90% opslag
 async function prepareImage(file: File): Promise<File> {
-  const MAX_DIM = 2000;
-  const MAX_BYTES = 4 * 1024 * 1024;
-
-  if (file.size <= MAX_BYTES && !file.name.match(/\.(heic|heif)$/i)) return file;
+  const MAX_DIM = 1920;
+  const QUALITY = 0.82;
 
   return new Promise((resolve) => {
     const img = new Image();
@@ -23,7 +21,7 @@ async function prepareImage(file: File): Promise<File> {
       canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) => resolve(new File([blob!], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" })),
-        "image/jpeg", 0.87
+        "image/jpeg", QUALITY
       );
     };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
