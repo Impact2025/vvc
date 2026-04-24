@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { db } from "@/db";
-import { donations, photos, comments, parents, matches } from "@/db/schema";
+import { donations, photos, comments, parents, matches, app_installs } from "@/db/schema";
 import { eq, desc, count, sum } from "drizzle-orm";
 import Link from "next/link";
 
@@ -36,6 +36,14 @@ async function getDashboardData() {
     .orderBy(desc(matches.date))
     .limit(5);
 
+  const installRows = await db
+    .select({ event: app_installs.event, total: count() })
+    .from(app_installs)
+    .groupBy(app_installs.event);
+
+  const installMap = Object.fromEntries(installRows.map(r => [r.event, Number(r.total)]));
+  const appInstalls = (installMap.accepted ?? 0) + (installMap.ios_shown ?? 0);
+
   return {
     donationCount: Number(donationStats?.total ?? 0),
     donationRaised: Number(donationPaid?.raised ?? 0),
@@ -43,6 +51,8 @@ async function getDashboardData() {
     pendingComments: Number(pendingComments),
     pendingParents: Number(pendingParents),
     recentMatches,
+    appInstalls,
+    appPrompted: installMap.prompted ?? 0,
   };
 }
 
@@ -109,6 +119,13 @@ export default async function AdminDashboard() {
       href: "/admin/ouders",
       color: data.pendingParents > 0 ? "text-red-600" : "text-on-surface-variant",
     },
+    {
+      label: "App geïnstalleerd",
+      value: data.appInstalls.toString(),
+      sub: `${data.appPrompted} keer prompt getoond`,
+      href: "/admin",
+      color: "text-secondary",
+    },
   ];
 
   const quickLinks = [
@@ -127,7 +144,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {statCards.map((card) => (
           <Link
             key={card.href}

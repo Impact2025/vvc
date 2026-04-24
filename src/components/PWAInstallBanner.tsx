@@ -24,14 +24,20 @@ export default function PWAInstallBanner() {
     setIsIOS(ios);
 
     if (ios) {
-      setTimeout(() => setShow(true), 1500);
+      setTimeout(() => {
+        setShow(true);
+        void fetch('/api/installs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'ios_shown', platform: 'ios' }) });
+      }, 1500);
       return;
     }
 
     const handler = (e: Event) => {
       e.preventDefault();
       setPrompt(e as BeforeInstallPromptEvent);
-      setTimeout(() => setShow(true), 1500);
+      setTimeout(() => {
+        setShow(true);
+        void fetch('/api/installs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'prompted', platform: 'android' }) });
+      }, 1500);
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
@@ -42,6 +48,7 @@ export default function PWAInstallBanner() {
     setShow(false);
     await prompt.prompt();
     const { outcome } = await prompt.userChoice;
+    void fetch('/api/installs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: outcome, platform: 'android' }) });
     if (outcome === 'dismissed') setShow(false);
     setPrompt(null);
   }

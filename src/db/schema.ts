@@ -162,6 +162,14 @@ export const blog_posts = pgTable("blog_posts", {
   updated_at: timestamp("updated_at").defaultNow(),
 });
 
+// ─── App Installs ────────────────────────────────────────────────────────────
+export const app_installs = pgTable("app_installs", {
+  id: serial("id").primaryKey(),
+  event: varchar("event", { length: 20 }).notNull(), // 'prompted' | 'accepted' | 'dismissed' | 'ios_shown'
+  platform: varchar("platform", { length: 10 }), // 'android' | 'ios'
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ─── Type Exports ─────────────────────────────────────────────────────────────
 export type Match = typeof matches.$inferSelect;
 export type NewMatch = typeof matches.$inferInsert;
