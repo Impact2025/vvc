@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { donations } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { sendDonationConfirmation, sendSponsorConfirmation, sendAdminNewSponsor } from "@/lib/email";
+import { sendDonationConfirmation, sendSponsorConfirmation, sendAdminNewSponsor, sendAdminNewDonation } from "@/lib/email";
 import { isAdmin, unauthorized } from "@/lib/auth";
 
 const VALID_TIERS = new Set(["vrije-donatie", "basissponsor", "tourpartner", "hoofdtourpartner"]);
@@ -92,6 +92,10 @@ export async function POST(req: Request) {
         void sendDonationConfirmation({
           name: safeName, email: recipientEmail, amountCents: safeAmount ?? 0, tier: safeTier,
         }).catch(err => console.error("[email] donation confirmation:", err));
+
+        void sendAdminNewDonation({
+          name: safeName, email: recipientEmail, amountCents: safeAmount ?? 0, tier: safeTier,
+        }).catch(err => console.error("[email] admin donation notification:", err));
       }
     }
 

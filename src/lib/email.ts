@@ -174,7 +174,35 @@ export async function sendAdminNewSponsor({
   });
 }
 
-// ── 4. Ouder-uitnodiging ─────────────────────────────────────────
+// ── 4. Admin-notificatie bij nieuwe (vrije) donatie ─────────────
+export async function sendAdminNewDonation({
+  name, email, amountCents, tier,
+}: {
+  name: string; email: string; amountCents: number; tier: string;
+}) {
+  const info = TIERS[tier] ?? { label: tier };
+  const euros = (amountCents / 100).toFixed(0);
+
+  return getResend().emails.send({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Nieuwe donatie: ${name} — €${euros}`,
+    html: layout(`
+      <h2 style="color:#1B2B5E;font-size:20px;font-weight:900;margin:0 0 20px;">Nieuwe donatie ontvangen 🧡</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <tr><td style="padding:8px 0;color:#999;width:130px;">Naam</td><td style="padding:8px 0;color:#222;font-weight:bold;">${name}</td></tr>
+        <tr><td style="padding:8px 0;color:#999;">E-mail</td><td style="padding:8px 0;"><a href="mailto:${email}" style="color:#E8723A;">${email}</a></td></tr>
+        <tr><td style="padding:8px 0;color:#999;">Bedrag</td><td style="padding:8px 0;color:#E8723A;font-weight:bold;">€${euros}</td></tr>
+        <tr><td style="padding:8px 0;color:#999;">Type</td><td style="padding:8px 0;color:#222;">${info.label}</td></tr>
+      </table>
+      <div style="margin-top:28px;text-align:center;">
+        ${btn(`${APP_URL}/admin/donaties`, "Bekijk in admin →")}
+      </div>
+    `),
+  });
+}
+
+// ── 5. Ouder-uitnodiging ─────────────────────────────────────────
 export async function sendParentInvite({
   naam, email, kindNaam, inviteUrl, expiresAt,
 }: {
