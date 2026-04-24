@@ -11,38 +11,40 @@ async function isAuthorized(): Promise<boolean> {
   return (await verifyParentCookie(raw)) !== null;
 }
 
-// Stap 1: browser vraagt token aan  → auth check hier (heeft cookies)
-// Stap 2: Vercel Belt callback terug → geen cookies, intern geverifieerd door handleUpload
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+  let body: HandleUploadBody;
+  try {
+    body = (await request.json()) as HandleUploadBody;
+  } catch {
+    return NextResponse.json({ error: "Ongeldig verzoek" }, { status: 400 });
+  }
+
+  // Token-aanvraag komt van de browser (heeft cookies) → auth vereist
+  // Completion-callback komt van Vercel servers (geen cookies) → geen auth
+  if (body.type === "blob.generate-client-token") {
+    if (!(await isAuthorized())) {
+      return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401 });
+    }
+  }
 
   try {
     const response = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async () => {
-        if (!(await isAuthorized())) {
-          throw new Error("Niet geautoriseerd");
-        }
-        return {
-          allowedContentTypes: [
-            "image/jpeg", "image/jpg", "image/png",
-            "image/webp", "image/heic", "image/heif",
-          ],
-          maximumSizeInBytes: 25 * 1024 * 1024,
-          tokenPayload: "",
-        };
-      },
-      onUploadCompleted: async () => {
-        // Vercel verifieert de completion intern — geen auth nodig
-      },
+      onBeforeGenerateToken: async () => ({
+        allowedContentTypes: [
+          "image/jpeg", "image/jpg", "image/png",
+          "image/webp", "image/heic", "image/heif",
+        ],
+        maximumSizeInBytes: 25 * 1024 * 1024,
+        tokenPayload: "",
+      }),
+      onUploadCompleted: async () => {},
     });
 
     return NextResponse.json(response);
   } catch (err) {
-    const msg = (err as Error).message;
-    const status = msg === "Niet geautoriseerd" ? 401 : 400;
-    console.error("[upload]", msg);
-    return NextResponse.json({ error: msg }, { status });
+    console.error("[upload] handleUpload error:", err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
