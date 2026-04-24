@@ -159,7 +159,7 @@ async function seed() {
     },
     {
       naam: "Ouder van Emersen",
-      email: "emerson.ouder@example.nl",
+      email: "emersen.ouder@example.nl",
       kind_naam: "Emersen",
       rol: "ouder",
       toestemming_fotos: true,
