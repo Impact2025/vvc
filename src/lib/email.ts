@@ -24,10 +24,10 @@ function getTikkieUrl(tier: string | null | undefined): string {
 
 // ── Tier metadata ────────────────────────────────────────────────
 const TIERS: Record<string, { label: string; perks: string[] }> = {
-  supporter:       { label: "Supporter",        perks: ["Naam op de doneursmuur"] },
-  vriend:          { label: "Vriend",            perks: ["Naam op de doneursmuur", "Weekendverslag per mail"] },
-  sponsor:         { label: "Sponsor",           perks: ["Naam op de doneursmuur", "Weekendverslag per mail", "Fotopakket na afloop"] },
-  hoofdsponsor:    { label: "Hoofdsponsor",      perks: ["Naam op de doneursmuur", "Weekendverslag per mail", "Fotopakket na afloop", "Bedankkaartje van de kids"] },
+  supporter:       { label: "Supporter",        perks: ["Naam op de donateursmuur"] },
+  vriend:          { label: "Vriend",            perks: ["Naam op de donateursmuur", "Weekendverslag per mail"] },
+  sponsor:         { label: "Sponsor",           perks: ["Naam op de donateursmuur", "Weekendverslag per mail", "Fotopakket na afloop"] },
+  hoofdsponsor:    { label: "Hoofdsponsor",      perks: ["Naam op de donateursmuur", "Weekendverslag per mail", "Fotopakket na afloop", "Bedankkaartje van de kids"] },
   basissponsor:    { label: "Sponsor",           perks: ["Foto met vlag — logo op de teamfoto in Londen", "Social exposure — vermelding op social media"] },
   tourpartner:     { label: "Tourpartner",       perks: ["Foto met vlag — logo op de teamfoto in Londen", "Social exposure — vermelding op social media", "Verloting gesigneerd Nederlands Elftal shirt"] },
   hoofdtourpartner:{ label: "Hoofdtourpartner",  perks: ["Foto met vlag — logo op de teamfoto in Londen", "Video met logo — jouw logo in onze reisvideo", "Social exposure — vermelding op social media", "Verloting gesigneerd Nederlands Elftal shirt"] },
@@ -100,7 +100,7 @@ export async function sendDonationConfirmation({
       <h2 style="color:#1B2B5E;font-size:22px;font-weight:900;margin:0 0 8px;">Bedankt, ${voornaam}! 🧡</h2>
       <p style="color:#666;font-size:15px;line-height:1.6;margin:0 0 4px;">
         Je aanmelding als <strong>${info.label}</strong> voor <strong>€${euros}</strong> is ontvangen.
-        Betaal via Tikkie om je donatie te bevestigen — daarna verschijnt je naam op de doneursmuur.
+        Betaal via Tikkie om je donatie te bevestigen — daarna verschijnt je naam op de donateursmuur.
       </p>
       ${perkbox(info.perks)}
       <div style="text-align:center;margin:28px 0;">

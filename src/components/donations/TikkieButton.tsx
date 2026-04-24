@@ -70,7 +70,7 @@ export default function TikkieButton({
         </div>
         <p className="font-headline font-bold text-on-surface">Bedankt!</p>
         <p className="text-sm text-on-surface-variant max-w-xs">
-          Betaal via Tikkie en je naam verschijnt op de doneursmuur.
+          Betaal via Tikkie en je naam verschijnt op de donateursmuur.
         </p>
         <button
           onClick={() => window.open(tikkieUrl, "_blank", "noopener,noreferrer")}

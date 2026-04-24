@@ -36,7 +36,7 @@ const TIERS: Tier[] = [
     amount: 10,
     emoji: "⚽",
     requireEmail: false,
-    perks: ["Naam op de doneursmuur"],
+    perks: ["Naam op de donateursmuur"],
   },
   {
     id: "vriend",
@@ -45,7 +45,7 @@ const TIERS: Tier[] = [
     emoji: "🧡",
     popular: true,
     requireEmail: true,
-    perks: ["Naam op de doneursmuur", "Weekendverslag per mail"],
+    perks: ["Naam op de donateursmuur", "Weekendverslag per mail"],
   },
   {
     id: "sponsor",
@@ -53,7 +53,7 @@ const TIERS: Tier[] = [
     amount: 50,
     emoji: "🏆",
     requireEmail: true,
-    perks: ["Naam op de doneursmuur", "Weekendverslag per mail", "Fotopakket na afloop"],
+    perks: ["Naam op de donateursmuur", "Weekendverslag per mail", "Fotopakket na afloop"],
   },
   {
     id: "hoofdsponsor",
@@ -61,7 +61,7 @@ const TIERS: Tier[] = [
     amount: 100,
     emoji: "⭐",
     requireEmail: true,
-    perks: ["Naam op de doneursmuur", "Weekendverslag per mail", "Fotopakket na afloop", "Bedankkaartje van de kids"],
+    perks: ["Naam op de donateursmuur", "Weekendverslag per mail", "Fotopakket na afloop", "Bedankkaartje van de kids"],
   },
 ];
 
@@ -119,7 +119,7 @@ function DonationForm({ tikkieUrl }: { tikkieUrl: string }) {
         <div>
           <p className="font-headline font-black text-xl text-on-surface">Bedankt, {naam.split(" ")[0]}!</p>
           <p className="text-sm text-on-surface-variant mt-1 max-w-xs">
-            Betaal via Tikkie. Daarna verschijnt je naam op de doneursmuur
+            Betaal via Tikkie. Daarna verschijnt je naam op de donateursmuur
             {selectedTier.requireEmail && email ? " en sturen we je het weekendverslag" : ""}.
           </p>
         </div>
@@ -250,7 +250,7 @@ function DonationForm({ tikkieUrl }: { tikkieUrl: string }) {
 
       <p className="text-center text-[11px] text-outline leading-relaxed">
         Je wordt doorgestuurd naar Tikkie voor veilig betalen via iDEAL.<br />
-        Je naam verschijnt daarna op de doneursmuur.
+        Je naam verschijnt daarna op de donateursmuur.
       </p>
     </form>
   );
@@ -756,7 +756,7 @@ export default function DonatieClient({ raised, goal, tikkieUrls, donations }: D
         </div>
       </section>
 
-      {/* ── DONEURSMUUR ─────────────────────────────────────────── */}
+      {/* ── DONATEURSMUUR ─────────────────────────────────────────── */}
       <section className="mb-8">
         <DonorWall donations={donations} />
       </section>
