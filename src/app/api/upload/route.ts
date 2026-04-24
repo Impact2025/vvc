@@ -1,54 +1,42 @@
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
 import { cookies } from "next/headers";
 import { isAdmin } from "@/lib/auth";
 import { verifyParentCookie } from "@/lib/parentAuth";
-
-const ALLOWED_TYPES = new Set([
-  "image/jpeg", "image/jpg", "image/png", "image/gif",
-  "image/webp", "image/heic", "image/heif",
-]);
-const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 
 async function isAuthorized(): Promise<boolean> {
   if (isAdmin()) return true;
   const raw = cookies().get("vvc_parent_session")?.value;
   if (!raw) return false;
-  const parentId = await verifyParentCookie(raw);
-  return parentId !== null;
+  return (await verifyParentCookie(raw)) !== null;
 }
 
-export async function POST(req: Request) {
+// Client-side direct upload: browser → Vercel Blob (bypasses 4.5 MB serverless limit)
+export async function POST(request: Request): Promise<NextResponse> {
   if (!(await isAuthorized())) {
     return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401 });
   }
 
+  const body = (await request.json()) as HandleUploadBody;
+
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File | null;
-
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
-
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return NextResponse.json({ error: "Alleen afbeeldingen zijn toegestaan (jpg, png, gif, webp, heic)" }, { status: 400 });
-    }
-
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "Bestand is te groot (max 10 MB)" }, { status: 400 });
-    }
-
-    // Sanitize filename: strip path separators and non-safe characters
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 100);
-
-    const blob = await put(`vvcgoesuk/${Date.now()}-${safeName}`, file, {
-      access: "public",
+    const response = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async () => ({
+        allowedContentTypes: [
+          "image/jpeg", "image/jpg", "image/png",
+          "image/webp", "image/heic", "image/heif",
+        ],
+        maximumSizeInBytes: 25 * 1024 * 1024, // 25 MB — ruim voor iPhone RAW
+        tokenPayload: "",
+      }),
+      onUploadCompleted: async () => {},
     });
 
-    return NextResponse.json({ url: blob.url });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json(response);
+  } catch (err) {
+    console.error("[upload]", err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 400 });
   }
 }
