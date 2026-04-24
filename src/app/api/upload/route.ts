@@ -11,32 +11,38 @@ async function isAuthorized(): Promise<boolean> {
   return (await verifyParentCookie(raw)) !== null;
 }
 
-// Client-side direct upload: browser → Vercel Blob (bypasses 4.5 MB serverless limit)
+// Stap 1: browser vraagt token aan  → auth check hier (heeft cookies)
+// Stap 2: Vercel Belt callback terug → geen cookies, intern geverifieerd door handleUpload
 export async function POST(request: Request): Promise<NextResponse> {
-  if (!(await isAuthorized())) {
-    return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401 });
-  }
-
   const body = (await request.json()) as HandleUploadBody;
 
   try {
     const response = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async () => ({
-        allowedContentTypes: [
-          "image/jpeg", "image/jpg", "image/png",
-          "image/webp", "image/heic", "image/heif",
-        ],
-        maximumSizeInBytes: 25 * 1024 * 1024, // 25 MB — ruim voor iPhone RAW
-        tokenPayload: "",
-      }),
-      onUploadCompleted: async () => {},
+      onBeforeGenerateToken: async () => {
+        if (!(await isAuthorized())) {
+          throw new Error("Niet geautoriseerd");
+        }
+        return {
+          allowedContentTypes: [
+            "image/jpeg", "image/jpg", "image/png",
+            "image/webp", "image/heic", "image/heif",
+          ],
+          maximumSizeInBytes: 25 * 1024 * 1024,
+          tokenPayload: "",
+        };
+      },
+      onUploadCompleted: async () => {
+        // Vercel verifieert de completion intern — geen auth nodig
+      },
     });
 
     return NextResponse.json(response);
   } catch (err) {
-    console.error("[upload]", err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 400 });
+    const msg = (err as Error).message;
+    const status = msg === "Niet geautoriseerd" ? 401 : 400;
+    console.error("[upload]", msg);
+    return NextResponse.json({ error: msg }, { status });
   }
 }
