@@ -10,8 +10,8 @@ interface TimeLeft {
   seconds: number;
 }
 
-// Zaterdag 30 mei 2026, 08:00 — vertrek richting Londen
-const TARGET = new Date("2026-05-30T08:00:00");
+// Vrijdag 29 mei 2026, 08:00 — vertrek richting Londen
+const TARGET = new Date("2026-05-29T08:00:00");
 
 function calcTimeLeft(): TimeLeft {
   const diff = TARGET.getTime() - Date.now();
@@ -88,7 +88,7 @@ export default function Countdown() {
 
           {/* Date label */}
           <p className="text-[10px] font-bold uppercase tracking-widest text-outline mt-3">
-            30 mei · vertrek Londen
+            29 mei · vertrek Londen
           </p>
         </>
       )}
