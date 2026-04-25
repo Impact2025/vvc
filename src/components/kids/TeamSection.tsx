@@ -64,7 +64,7 @@ const TEAM: Player[] = [
   {
     name: "Deniz",
     position: "Aanvaller",
-    number: 6,
+    number: 5,
     photo: "/photos/players/deniz.jpg",
     emoji: "⚡",
     qna: [
