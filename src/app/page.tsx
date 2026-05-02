@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/db";
 import {
   matches,
@@ -21,6 +22,7 @@ import Countdown from "@/components/home/Countdown";
 import ChatBot from "@/components/home/ChatBot";
 import LiveLocationBanner from "@/components/home/LiveLocationBanner";
 async function getData() {
+  noStore();
   try {
     const today = new Date().toISOString().slice(0, 10);
 

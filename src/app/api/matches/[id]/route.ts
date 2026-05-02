@@ -75,6 +75,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
           .where(eq(players.name, assist_name));
       }
       revalidatePath("/kids");
+      revalidatePath("/");
     }
 
     if (!updated) {
@@ -89,6 +90,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
         status: updated.status,
         scorer: scorer_name ?? null,
       });
+      revalidatePath("/");
     }
 
     if (status === "live") {
