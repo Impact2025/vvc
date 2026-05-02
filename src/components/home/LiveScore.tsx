@@ -28,7 +28,7 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
   useEffect(() => {
     const poll = async () => {
       try {
-        const res = await fetch("/api/match/current");
+        const res = await fetch("/api/match/current", { cache: "no-store" });
         if (!res.ok) return;
         const data: Match | null = await res.json();
         setMatch(data);
@@ -37,7 +37,7 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
       }
     };
     poll();
-    const id = setInterval(poll, 30000);
+    const id = setInterval(poll, 5000);
     return () => clearInterval(id);
   }, []);
 
