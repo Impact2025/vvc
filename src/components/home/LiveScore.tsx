@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MapPin } from "lucide-react";
 import { getPusherClient } from "@/lib/pusher";
 import Badge from "@/components/ui/Badge";
@@ -20,11 +21,13 @@ interface ScoreUpdate {
 
 export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
   const [match, setMatch] = useState<Match | null>(initialMatch);
+  const router = useRouter();
 
   useEffect(() => {
     setMatch(initialMatch);
   }, [initialMatch]);
 
+  // API poll: updates client state directly
   useEffect(() => {
     const poll = async () => {
       try {
@@ -40,6 +43,13 @@ export default function LiveScore({ match: initialMatch }: LiveScoreProps) {
     const id = setInterval(poll, 5000);
     return () => clearInterval(id);
   }, []);
+
+  // router.refresh() forces Next.js to re-run server-side getData()
+  // and push fresh initialMatch down to this component
+  useEffect(() => {
+    const id = setInterval(() => router.refresh(), 5000);
+    return () => clearInterval(id);
+  }, [router]);
 
   useEffect(() => {
     if (!match) return;
