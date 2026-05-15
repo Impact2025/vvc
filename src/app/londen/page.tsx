@@ -1,13 +1,15 @@
+export const dynamic = "force-dynamic";
+
 import { db } from "@/db";
 import { checkins } from "@/db/schema";
 import { asc } from "drizzle-orm";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import type { Checkin } from "@/db/schema";
 
 // Dynamically import the map to avoid SSR issues with Leaflet
-const LeafletMap = dynamic(() => import("./LeafletMap"), { ssr: false });
+const LeafletMap = nextDynamic(() => import("./LeafletMap"), { ssr: false });
 
 async function getData(): Promise<Checkin[]> {
   try {

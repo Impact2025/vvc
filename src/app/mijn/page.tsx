@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { redirect } from "next/navigation";
 import { getParentSession } from "@/lib/parentSession";
 import { db } from "@/db";
